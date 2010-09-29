@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{10AFAC70-F8E7-4BAB-9EC3-887C65186662}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Apics.Data.AptifyAdapter</RootNamespace>
+    <AssemblyName>Apics.Data.AptifyAdapter</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AptifyApplication, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f3fa0ecabf9514d9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\AptifyApplication.dll</HintPath>
+    </Reference>
+    <Reference Include="AptifyAttributeManagement, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f3fa0ecabf9514d9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\AptifyAttributeManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="AptifyGenericDataServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f3fa0ecabf9514d9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\AptifyGenericDataServices.dll</HintPath>
+    </Reference>
+    <Reference Include="AptifyGenericEntityBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f3fa0ecabf9514d9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\AptifyGenericEntityBase.dll</HintPath>
+    </Reference>
+    <Reference Include="AptifyUtility, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f3fa0ecabf9514d9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\AptifyUtility.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.ActiveRecord, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Apics.Data\Libraries\Castle.ActiveRecord.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.ActiveRecord.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Apics.Data\Libraries\Castle.ActiveRecord.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core, Version=1.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Apics.Data\Libraries\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="IAptifyDataServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f3fa0ecabf9514d9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\IAptifyDataServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Apics.Data\Libraries\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Apics.Utilities\Libraries\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Apics.Data\Libraries\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Apics.Utilities\Libraries\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ADO\AptifyNHibernateTransaction.cs" />
+    <Compile Include="ADO\AptifyTransactionFactory.cs" />
+    <Compile Include="ADO\IAptifyTransaction.cs" />
+    <Compile Include="AptifyAdapterModule.cs" />
+    <Compile Include="AptifyConnectionStringBuilder.cs" />
+    <Compile Include="AptifyEntity.cs" />
+    <Compile Include="AptifyServer.cs" />
+    <Compile Include="Configuration\AptifyModulesConfigurator.cs" />
+    <Compile Include="Event\NHibernateDeleteEvent.cs" />
+    <Compile Include="Event\NHibernateBaseEvent.cs" />
+    <Compile Include="AptifyDriver.cs" />
+    <Compile Include="AptifyConnectionProvider.cs" />
+    <Compile Include="ADO\AptifyDataReader.cs" />
+    <Compile Include="ADO\AptifyDataReaderEnumerator.cs" />
+    <Compile Include="AptifyDataStore.cs" />
+    <Compile Include="ADO\AptifyCommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ADO\AptifyConnection.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="AptifyDialect.cs" />
+    <Compile Include="Event\NHibernateSaveEvent.cs" />
+    <Compile Include="Event\NHibernateUpdateEvent.cs" />
+    <Compile Include="Mapping\AptifyChildEntity.cs" />
+    <Compile Include="Mapping\Metadata\AptifyColumnMetadata.cs" />
+    <Compile Include="Mapping\Metadata\AptifyEntityMetadata.cs" />
+    <Compile Include="Mapping\Metadata\EntityMetadataCollection.cs" />
+    <Compile Include="Mapping\Visitors\AptifyModelMapper.cs" />
+    <Compile Include="ADO\AptifyParameterCollection.cs" />
+    <Compile Include="ADO\AptifyTransaction.cs" />
+    <Compile Include="Mapping\AptifyEntityLoader.cs" />
+    <Compile Include="Mapping\Metadata\AptifyTableMetadata.cs" />
+    <Compile Include="Mapping\HasManyMappingException.cs" />
+    <Compile Include="Mapping\Visitors\BelongsToVisitor.cs" />
+    <Compile Include="Mapping\Visitors\HasManyVisitor.cs" />
+    <Compile Include="Mapping\MappingException.cs" />
+    <Compile Include="Mapping\TableMappings.cs" />
+    <Compile Include="Mapping\Visitors\ModelVisitor.cs" />
+    <Compile Include="Mapping\Visitors\PropertyVisitor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Queries.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Store\EntityStore.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Apics.Data\Apics.Data.csproj">
+      <Project>{08974BDC-8F47-4042-A408-3D863C969C6F}</Project>
+      <Name>Apics.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Apics.Utilities\Apics.Utilities.csproj">
+      <Project>{D1B0E0D5-E8C3-4B29-AF8C-7B2653531987}</Project>
+      <Name>Apics.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Queries.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Queries.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

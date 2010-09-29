@@ -1,0 +1,9 @@
+﻿Make sure to create the event logs since the application will not have rights to do this unless elevation is requested
+through the UAC.
+    - Add keys "Aptify.ExceptionManagerInternalException" and "Aptify.ExceptionManagerPublishedException"
+        to "HKLM\SYSTEM\CurrentControlSet\services\eventlog\Application"
+
+- If an error occurs on first run, run again to reload the DLLs.  This is an issue that when the DLLs are 
+    loaded from the Aptify database, the Aptify API requests the DLL too late.  On the second run, the 
+    DLL will already be cached and ready to load.  If you do have this problem, add the DLL to the configuration
+    file.
