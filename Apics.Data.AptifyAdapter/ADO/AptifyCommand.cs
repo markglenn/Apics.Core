@@ -97,7 +97,18 @@ namespace Apics.Data.AptifyAdapter.ADO
 
         public override int ExecuteNonQuery( )
         {
-            return 1;
+            // Straight text queries are assumed to come from NHibernate
+            if ( this.CommandType == CommandType.Text )
+                return 1;
+
+            if ( DbTransaction == null )
+            {
+                return this.dataAction.ExecuteNonQueryParametrized(
+                    CommandText, CommandType, this.parameters );
+            }
+            
+            return this.dataAction.ExecuteNonQueryParametrized(
+                this.CommandText, this.CommandType, this.parameters, this.transaction.TransactionName );
         }
 
         public override object ExecuteScalar( )
