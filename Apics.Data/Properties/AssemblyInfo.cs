@@ -42,3 +42,4 @@ using log4net.Config;
 [assembly: AssemblyFileVersion( "1.0.0.0" )]
 [assembly: CLSCompliant( true )]
 [assembly: XmlConfigurator( ConfigFile = "log4net.config", Watch = true )]
+[assembly: AliasRepository( "Apics.Data" )]
