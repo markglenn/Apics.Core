@@ -67,7 +67,6 @@ namespace Apics.Data
         }
 
         #endregion [ Constructors ]
-
       
         /// <summary>
         /// Loads an adapter module into the DI kernel

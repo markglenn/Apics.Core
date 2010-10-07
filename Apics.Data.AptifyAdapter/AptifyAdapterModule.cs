@@ -89,10 +89,17 @@ namespace Apics.Data.AptifyAdapter
 
                     if( rawFile != null )
                     {
-                        // Cache the DLL into our working folder
-                        File.WriteAllBytes( filename, rawFile );
+                        try
+                        {
+                            // Cache the DLL into our working folder
+                            File.WriteAllBytes( filename, rawFile );
 
-                        Log.InfoFormat( "Successfully downloaded {0} from Aptify database.", args.Name );
+                            Log.InfoFormat( "Successfully downloaded {0} from Aptify database.", args.Name );
+                        }
+                        catch( Exception ex )
+                        {
+                            Log.WarnFormat( "Could not cache {0}: {1}", filename, ex );
+                        }
 
                         // Return the true assembly
                         return Assembly.Load( rawFile );
