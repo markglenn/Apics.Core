@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using NServiceBus;
 
 namespace Apics.Messaging.Messages.Shipping
 {
-    public class ShippingQuoteRequest : IMessage
+    public class ShippingQuoteRequest
     {
         public ShippingAddress Address { get; set; }
         public decimal Weight { get; set; }
