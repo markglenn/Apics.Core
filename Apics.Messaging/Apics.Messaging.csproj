@@ -48,6 +48,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,14 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MessagingModuleBase.cs" />
+    <Compile Include="IShippingQuoteService.cs" />
+    <Compile Include="Messages\Shipping\ShipmentQuote.cs" />
+    <Compile Include="Messages\Shipping\ShippingQuoteRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Apics.Messaging.Messages\Apics.Messaging.Messages.csproj">
-      <Project>{7B7EE14E-45B3-4C31-B7C8-25F4FF10CF6D}</Project>
-      <Name>Apics.Messaging.Messages</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
