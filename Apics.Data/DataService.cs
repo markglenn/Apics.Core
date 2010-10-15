@@ -7,7 +7,6 @@ using System.Reflection;
 using log4net;
 using Ninject.Parameters;
 using Apics.Data.Database;
-using Apics.Utilities.Module;
 
 namespace Apics.Data
 {
@@ -16,10 +15,13 @@ namespace Apics.Data
     /// </summary>
     public class DataService : IDisposable
     {
+        #region [ Private Members ]
+        
         private static readonly ILog Log = LogManager.GetLogger( typeof( DataService ) );
 
         private readonly IDataStore dataStore;
-        private readonly IKernel kernel;
+
+        #endregion [ Private Members ]
         
         #region [ Public Properties ]
 
@@ -32,48 +34,63 @@ namespace Apics.Data
 
         #region [ Constructors ]
 
-        public DataService( )
-            : this( "apics.dependency", "apics.data" )
-        {
-        }
-
-        public DataService( string dependencySection, string dataSection )
-            : this( NinjectFactory.Create( dependencySection ),
+        /// <summary>
+        /// Creates a data service using a config file
+        /// </summary>
+        /// <param name="kernel">Dependency injection kernel</param>
+        /// <param name="dataSection">Configuration section name</param>
+        public DataService( IKernel kernel, string dataSection )
+            : this( kernel, 
                 ( DatabaseConfigurationSection )ConfigurationManager.GetSection( dataSection ) )
         {
         }
 
+        /// <summary>
+        /// Creates a data service using a config file
+        /// </summary>
+        /// <param name="kernel">Dependency injection kernel</param>
+        /// <param name="config">Configuration section name</param>
         public DataService( IKernel kernel, DatabaseConfigurationSection config )
+            : this( kernel, config.ConnectionString, config.ModelAssembly, config.AdapterModule )
         {
-            // Create the DI kernel
-            this.kernel = kernel;
+        }
 
-            // Load any configured adapter module
-            LoadAdapterModule( config.AdapterModule, config.ConnectionString );
+        public DataService( IKernel kernel, string connectionString, string modelAssembly ) 
+            : this( kernel, connectionString, modelAssembly, null )
+        {
+        }
+
+        public DataService( IKernel kernel, string connectionString, string modelAssembly, 
+            string adapterModule )
+        {
+            // Load any configured adapter module);
+            LoadAdapterModule( kernel, adapterModule, connectionString );
 
             // Make sure the model assembly is loaded
-            if( !String.IsNullOrEmpty( config.ModelAssembly ) )
+            if ( !String.IsNullOrEmpty( modelAssembly ) )
             {
-                Log.InfoFormat( "Loading model assembly: {0}", config.ModelAssembly );
-                Assembly.Load( config.ModelAssembly );
+                Log.InfoFormat( "Loading model assembly: {0}", modelAssembly );
+                Assembly.Load( modelAssembly );
             }
 
             // Create the datastore object using DI
-            this.dataStore = this.kernel.Get<IDataStore>(
-                new ConstructorArgument( "connectionString", config.ConnectionString ) );
+            this.dataStore = kernel.Get<IDataStore>(
+                new ConstructorArgument( "connectionString", connectionString ) );
 
             // Make sure to initialize the datastore correctly
             this.dataStore.Initialize( );
         }
 
         #endregion [ Constructors ]
-      
+
         /// <summary>
         /// Loads an adapter module into the DI kernel
         /// </summary>
+        /// <param name="kernel">Dependency injection kernel</param>
         /// <param name="adapterModule">Adapter module type</param>
         /// <param name="connectionString">Connection string</param>
-        private void LoadAdapterModule( string adapterModule, string connectionString )
+        private static void LoadAdapterModule( IKernel kernel, string adapterModule, 
+            string connectionString )
         {
             Type moduleType = Type.GetType( adapterModule, false );
 
@@ -90,28 +107,12 @@ namespace Apics.Data
 
             Log.InfoFormat( "Using database adapter: {0}", moduleType.Name );
 
-            this.kernel.Bind( moduleType ).ToSelf( );
+            kernel.Bind( moduleType ).ToSelf( );
 
-            var module = ( INinjectModule )this.kernel.Get( moduleType,
+            var module = ( INinjectModule )kernel.Get( moduleType,
                 new ConstructorArgument( "connectionString", connectionString ) );
 
-            this.kernel.Load( module );
-        }
-
-        ~DataService( )
-        {
-            Dispose( false );
-        }
-
-        protected virtual void Dispose( bool disposing )
-        {
-            if( !disposing ) 
-                return;
-
-            this.kernel.Dispose( );
-
-            if( this.dataStore != null )
-                this.dataStore.Dispose( );
+            kernel.Load( module );
         }
 
         #region [ IDisposable Members ]
@@ -122,7 +123,20 @@ namespace Apics.Data
             GC.SuppressFinalize( this );
         }
 
-        #endregion [ IDisposable Members ]
+        ~DataService( )
+        {
+            Dispose( false );
+        }
 
+        protected virtual void Dispose( bool disposing )
+        {
+            if ( !disposing )
+                return;
+
+            if ( this.dataStore != null )
+                this.dataStore.Dispose( );
+        }
+
+        #endregion [ IDisposable Members ]
     }
 }

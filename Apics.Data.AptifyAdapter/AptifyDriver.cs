@@ -34,6 +34,7 @@ namespace Apics.Data.AptifyAdapter
 
         public override void Configure( IDictionary<string, string> settings )
         {
+            // Pull in the connection string from the settings
             this.connectionString = settings[ Environment.ConnectionString ];
             base.Configure( settings );
         }

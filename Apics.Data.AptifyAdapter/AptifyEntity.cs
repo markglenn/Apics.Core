@@ -22,8 +22,6 @@ namespace Apics.Data.AptifyAdapter
     /// </summary>
     internal class AptifyEntity
     {
-        private static readonly ILog Log = LogManager.GetLogger( typeof( AptifyEntity ) );
-
         #region [ Internal Properties ]
 
         internal AptifyEntity Parent
@@ -38,12 +36,18 @@ namespace Apics.Data.AptifyAdapter
 
         #endregion [ Internal Properties ]
 
+        #region [ Private Members ]
+
+        private static readonly ILog Log = LogManager.GetLogger( typeof( AptifyEntity ) );
+
         private readonly IEnumerable<AptifyEntity> children;
         private readonly AptifyGenericEntityBase genericEntity;
         private readonly AptifyEntity parent;
         private readonly AptifyServer server;
         private readonly EntityStore store;
         private readonly AptifyTableMetadata table;
+
+        #endregion [ Private Members ]
 
         /// <summary>
         /// Creates an instance of a generic entity
@@ -63,14 +67,13 @@ namespace Apics.Data.AptifyAdapter
         /// <param name="store">Entity storage</param>
         private AptifyEntity( AptifyEntity parent, AptifyServer server, EntityStore store )
         {
-            this.parent = parent;
-
             if( server == null )
                 throw new ArgumentNullException( "server" );
 
             if( store == null )
                 throw new ArgumentNullException( "store" );
 
+            this.parent = parent;
             this.server = server;
             this.store = store;
 
