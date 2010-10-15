@@ -70,6 +70,7 @@
     <Compile Include="Archive\IArchive.cs" />
     <Compile Include="Archive\ZipArchive.cs" />
     <Compile Include="Archive\ZipFileStream.cs" />
+    <Compile Include="AsyncResult.cs" />
     <Compile Include="Extension\DateTimeExtensions.cs" />
     <Compile Include="Extension\EnumerableExtensions.cs" />
     <Compile Include="Extension\StreamExtensions.cs" />

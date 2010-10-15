@@ -5,16 +5,18 @@ using System.Runtime.Serialization;
 
 namespace Apics.Messaging.Messages.Shipping
 {
+    [DataContract]
     public enum NotificationType
     {
-        Success,
-        Message,
-        Warning,
-        Error,
-        Fatal
+        [EnumMember] Success,
+        [EnumMember] Message,
+        [EnumMember] Warning,
+        [EnumMember] Error,
+        [EnumMember] Fatal
     }
 
     [DebuggerDisplay( "{Name} - {Price} - {Message}" )]
+    [DataContract]
     public class ShipmentQuote
     {
         #region [ Public Properties ]
@@ -58,6 +60,10 @@ namespace Apics.Messaging.Messages.Shipping
             this.Name = shipmentName;
             this.Message = message;
             this.NotificationType = notificationType;
+        }
+
+        public ShipmentQuote( )
+        {
         }
     }
 }
