@@ -16,13 +16,13 @@ namespace Apics.Data.Database
             this.session = session;
         }
 
-        #region ISession Members
+        #region [ ISession Members ]
 
         public void Dispose( )
         {
             this.session.Dispose( );
         }
 
-        #endregion
+        #endregion [ ISession Members ]
     }
 }

@@ -17,10 +17,14 @@ namespace Apics.Data.AptifyAdapter
     /// <summary>
     /// Connection store class to an aptify backend
     /// </summary>
-    public class AptifyDataStore : AbstractDataStore
+    public class AptifyDataStore : DataStoreBase
     {
+        #region [ Private Members ]
+
         private static readonly ILog Log = LogManager.GetLogger( typeof( AptifyDataStore ) );
         private readonly AptifyServer server;
+
+        #endregion [ Private Members ]
 
         /// <summary>
         /// Creates a new aptify store
@@ -67,13 +71,13 @@ namespace Apics.Data.AptifyAdapter
             Log.Info( "Successfully mapped ActiveRecord models" );
         }
 
-        #region [ Overrides of AbstractDataStore ]
+        #region [ Overrides of DataStoreBase ]
 
         public override IDbConnection CreateConnection( )
         {
             return this.server.CreateConnection( );
         }
 
-        #endregion [ Overrides of AbstractDataStore ]
+        #endregion [ Overrides of DataStoreBase ]
     }
 }

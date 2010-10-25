@@ -14,7 +14,7 @@ using ConfigEnvironment = NHibernate.Cfg.Environment;
 
 namespace Apics.Data
 {
-	public abstract class AbstractDataStore : IDataStore
+	public abstract class DataStoreBase : IDataStore
 	{
 		#region [ Private Members ]
 
@@ -22,7 +22,7 @@ namespace Apics.Data
 
 		#endregion [ Private Members ]
 
-	    protected AbstractDataStore( IEventHandler handler, IDialect dialect, 
+	    protected DataStoreBase( IEventHandler handler, IDialect dialect, 
 			Type connectionProvider, string connectionString )
 		{
 			if ( dialect == null )
@@ -129,11 +129,16 @@ namespace Apics.Data
 	    /// <returns>A new connection to the database</returns>
 	    public abstract IDbConnection CreateConnection( );
 
+        public virtual ISession CreateSession( )
+        {
+            return new DatabaseSession( new SessionScope( ) );
+        }
+
 		#endregion [ IDataStore Members ]
 
 		#region [ IDisposable Members ]
 
-		~AbstractDataStore( )
+        ~DataStoreBase( )
 		{
 			Dispose( false );
 		}
@@ -150,5 +155,6 @@ namespace Apics.Data
 		}
 
 		#endregion [ IDisposable Members ]
-	}
+
+    }
 }

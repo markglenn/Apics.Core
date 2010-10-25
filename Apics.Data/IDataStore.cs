@@ -22,6 +22,12 @@ namespace Apics.Data
         /// <returns>Transaction object</returns>
         ITransaction CreateTransaction( );
 
+        /// <summary>
+        /// Creates a session to encase a series of queries
+        /// </summary>
+        /// <returns>Session to the database</returns>
+        ISession CreateSession( );
+
 		/// <summary>
 		/// Initializes the data store so it can be officially used
 		/// </summary>
