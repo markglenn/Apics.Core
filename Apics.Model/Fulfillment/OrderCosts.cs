@@ -21,7 +21,13 @@ namespace Apics.Model.Fulfillment
         [OneToOne]
         public virtual Order Order { get; set; }
 
-        [Property( "CALC_GrandTotal", Access = PropertyAccess.ReadOnly )]
+        [Property( "CALC_SubTotal" )]
+        public virtual decimal SubTotal { get; set; }
+
+        [Property( "CALC_SalesTax" )]
+        public virtual decimal SalesTax { get; set; }
+
+        [Property( "CALC_GrandTotal" )]
         public virtual decimal GrandTotal { get; set; }
     }
 }

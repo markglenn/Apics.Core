@@ -53,6 +53,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Financial\PaymentInformation.cs" />
+    <Compile Include="Financial\PaymentType.cs" />
     <Compile Include="Fulfillment\DistributionType.cs" />
     <Compile Include="Fulfillment\Order.cs" />
     <Compile Include="Fulfillment\OrderItem.cs" />

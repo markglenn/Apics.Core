@@ -20,8 +20,13 @@ namespace Apics.Data.AptifyAdapter.Mapping.Visitors
         /// <param name="model">Model that contains the relationship</param>
         public override void VisitBelongsTo( BelongsToModel model )
         {
-            if( model.BelongsToAtt.Column == null )
-                throw new ArgumentException( "BelongsTo missing column parameter: " + model.Property );
+            if ( model.BelongsToAtt.Column == null )
+            {
+                string message = String.Format( "BelongsTo missing column parameter in class {0} and property {1}",
+                    model.Property.DeclaringType.FullName, model.Property );
+
+                throw new ArgumentException( message );
+            }
 
             Type child = model.Property.ReflectedType;
 

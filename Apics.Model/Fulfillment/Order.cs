@@ -5,6 +5,7 @@ using System.Linq;
 using Apics.Model.Location;
 using Apics.Model.User;
 using Castle.ActiveRecord;
+using Apics.Model.Financial;
 
 namespace Apics.Model.Fulfillment
 {
@@ -101,6 +102,9 @@ namespace Apics.Model.Fulfillment
 
         [BelongsTo( "ShipTypeID" )]
         public virtual ShipType ShipType { get; set; }
+
+        [BelongsTo( "PaymentInformationID" )]
+        public virtual PaymentInformation PaymentInformation { get; set; }
     }
 
     public static class OrderQueries
