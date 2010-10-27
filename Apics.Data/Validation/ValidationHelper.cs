@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace Apics.Utilities.Validation
+namespace Apics.Data.Validation
 {
     public static class ValidationHelper
     {

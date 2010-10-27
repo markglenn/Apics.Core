@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Apics.Utilities.Validation
+namespace Apics.Data.Validation
 {
     /// <summary>
     /// Defines an instance of a violation of an object

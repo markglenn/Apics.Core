@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using Apics.Data.AptifyAdapter.Mapping.Metadata;
-using Apics.Utilities.Extension;
 using log4net;
 
 namespace Apics.Data.AptifyAdapter.Mapping
@@ -77,11 +76,24 @@ namespace Apics.Data.AptifyAdapter.Mapping
             return entities;
         }
 
+        /// <summary>
+        /// Find the parents of a collection of entities
+        /// </summary>
+        /// <param name="entities">Collection of entity metadata</param>
+        /// <param name="parentIDs">Parent IDs that correlate to the entities</param>
         private static void MapParents( EntityMetadataCollection entities, IEnumerable<int> parentIDs )
         {
-            // Define parent entities
-            foreach( var item in entities.Zip( parentIDs ).Where( item => item.Second > 0 ) )
-                item.First.Parent = entities.GetById( item.Second );
+            using( var e1 = entities.GetEnumerator( ) )
+            using ( var e2 = parentIDs.GetEnumerator( ) )
+            {
+                while ( e1.MoveNext( ) )
+                {
+                    if ( !e2.MoveNext( ) )
+                        throw new Exception( "Mapping of parents requires the same number of parentIDs as entities" );
+
+                    e1.Current.Parent = entities.GetById( e2.Current );
+                }
+            }
         }
 
         private static void LoadAptifyTableMetadata( IDbConnection connection, EntityMetadataCollection entities )
