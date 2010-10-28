@@ -122,6 +122,15 @@ namespace Apics.Data.Database
 	    }
 
 	    #endregion [ IRepository Members ]
-	}
+
+        #region IRepository Members
+
+        public object GetById( object id )
+        {
+            return ActiveRecordMediator<T>.FindByPrimaryKey( id );
+        }
+
+        #endregion
+    }
 }
 

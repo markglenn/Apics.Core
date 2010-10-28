@@ -28,6 +28,8 @@ namespace Apics.Data
         /// </summary>
         /// <param name="entity">Entity to evict</param>
         void Evict( object entity );
+
+        Object GetById( object id );
     }
 
     public interface IRepository<T> : IRepository, IQueryable<T> where T : class
