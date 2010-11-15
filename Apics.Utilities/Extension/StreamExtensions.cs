@@ -78,5 +78,10 @@ namespace Apics.Utilities.Extension
         {
             return new GZipStream( stream, CompressionMode.Decompress, leaveOpen );
         }
+
+        public static string ToHexString( this byte[ ] buffer )
+        {
+            return String.Join( String.Empty, buffer.Select( b => b.ToString( "x2" ) ).ToArray( ) );
+        }
     }
 }
