@@ -124,6 +124,7 @@
     <Compile Include="Dialect\SqlServer2008Dialect.cs" />
     <Compile Include="EventHandlerComposite.cs" />
     <Compile Include="IEventHandler.cs" />
+    <Compile Include="InMemoryRepository.cs" />
     <Compile Include="ISession.cs" />
     <Compile Include="ITransaction.cs" />
     <Compile Include="DataService.cs" />
