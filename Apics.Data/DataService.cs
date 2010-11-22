@@ -13,7 +13,7 @@ namespace Apics.Data
     /// <summary>
     /// Database access service
     /// </summary>
-    public class DataService : IDisposable
+    public class DataService : IDataService
     {
         #region [ Private Members ]
         
@@ -79,6 +79,9 @@ namespace Apics.Data
 
             // Make sure to initialize the datastore correctly
             this.dataStore.Initialize( );
+
+            // Load up the repository module so we can do DI on the repositories
+            kernel.Load( new RepositoryModule( this ) );
         }
 
         #endregion [ Constructors ]

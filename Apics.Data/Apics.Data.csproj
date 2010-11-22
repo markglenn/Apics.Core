@@ -123,6 +123,7 @@
     <Compile Include="Dialect\SQLiteDialect.cs" />
     <Compile Include="Dialect\SqlServer2008Dialect.cs" />
     <Compile Include="EventHandlerComposite.cs" />
+    <Compile Include="IDataService.cs" />
     <Compile Include="IEventHandler.cs" />
     <Compile Include="InMemoryRepository.cs" />
     <Compile Include="ISession.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="IDataStore.cs" />
     <Compile Include="Database\DatabaseDataStore.cs" />
     <Compile Include="Database\Transaction.cs" />
+    <Compile Include="RepositoryModule.cs" />
     <Compile Include="UserType\NChar.cs" />
     <Compile Include="Validation\ValidationHelper.cs" />
     <Compile Include="Validation\Violation.cs" />
