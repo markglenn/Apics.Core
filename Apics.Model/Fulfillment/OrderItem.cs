@@ -29,6 +29,12 @@ namespace Apics.Model.Fulfillment
 
         [Property( NotNull = true )]
         public virtual int QuantityShipped { get; set; }
+
+        [Property( NotNull = true )]
+        public virtual int Sequence { get; set; }
+
+        [Property( NotNull = true )]
+        public virtual int ParentSequence { get; set; }
     }
 
     public static class OrderItemQueries

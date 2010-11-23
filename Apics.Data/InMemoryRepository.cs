@@ -8,7 +8,17 @@ namespace Apics.Data
 {
     public class InMemoryRepository<T> : IRepository<T> where T : class
     {
-        private IList<T> storage = new List<T>( );
+        private List<T> storage = new List<T>( );
+        
+        public InMemoryRepository( )
+        {
+
+        }
+
+        public InMemoryRepository( IEnumerable<T> items )
+        {
+            this.storage.AddRange( items );
+        }
 
         #region IRepository<T> Members
 
