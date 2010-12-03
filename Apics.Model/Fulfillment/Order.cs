@@ -52,6 +52,9 @@ namespace Apics.Model.Fulfillment
         [OneToOne]
         public virtual OrderCosts Costs { get; set; }
 
+        [Property]
+        public virtual decimal? InitialPaymentAmount { get; set; }
+
         /// <summary>
         /// Person receiving this shipment
         /// </summary>
@@ -105,6 +108,9 @@ namespace Apics.Model.Fulfillment
 
         [BelongsTo( "PaymentInformationID" )]
         public virtual PaymentInformation PaymentInformation { get; set; }
+
+        [HasMany]
+        public virtual IList<Shipment> Shipments { get; set; }
     }
 
     public static class OrderQueries

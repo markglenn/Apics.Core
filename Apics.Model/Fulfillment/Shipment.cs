@@ -37,8 +37,8 @@ namespace Apics.Model.Fulfillment
         [Property( "OverrideShippingCalc" )]
         public virtual bool OverrideShippingCalculation { get; set; }
 
-        [Property]
-        public virtual bool OverrideHandlingCalc { get; set; }
+        [Property( "OverrideHandlingCalc" )]
+        public virtual bool OverrideHandlingCalculation { get; set; }
 
         [Property]
         public virtual decimal ShippingCharge { get; set; }
@@ -53,7 +53,7 @@ namespace Apics.Model.Fulfillment
         //public virtual TaxJurisdiction TaxJurisdiction { get; set; }
 
         [Property]
-        public virtual bool TaxIncludedInCharg { get; set; }
+        public virtual bool TaxIncludedInCharges { get; set; }
 
         //[BelongsTo( "ShipmentTypeGroupingID", Lazy = FetchWhen.OnInvoke )]
         //public virtual ShipmentTypeGrouping ShipmentTypeGrouping { get; set; }
@@ -65,7 +65,7 @@ namespace Apics.Model.Fulfillment
         public virtual decimal TotalWeight { get; set; }
 
         [Property( NotNull = true, Length = 10 )]
-        public virtual string WeightUnit { get; set; }
+        public virtual string WeightUnits { get; set; }
 
         //[BelongsTo( "ShipmentTypeMatrixID", Lazy = FetchWhen.OnInvoke )]
         //public virtual ShipmentTypeMatrix ShipmentTypeMatrix { get; set; }

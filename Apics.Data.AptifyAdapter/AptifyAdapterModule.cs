@@ -78,6 +78,9 @@ namespace Apics.Data.AptifyAdapter
             if( args == null || String.IsNullOrEmpty( args.Name ) )
                 return null;
 
+            if ( args.Name.Contains( "AptifyAdapter.resources," ) )
+                return null;
+
             using( var connection = new SqlConnection( this.connectionString ) )
             {
                 try

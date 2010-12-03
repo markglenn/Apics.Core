@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
+using Apics.Model.User;
+using System.Diagnostics;
 
 namespace Apics.Model.Fulfillment
 {
-    [ActiveRecord]
+    [ActiveRecord( Lazy = true )]
+    [DebuggerDisplay( "ShipType: {Id}" )]
     public class ShipType
     {
         [PrimaryKey]
@@ -20,5 +23,8 @@ namespace Apics.Model.Fulfillment
 
         [Property]
         public virtual bool IsActive { get; set; }
+
+        [BelongsTo( "ShipperID", Lazy = FetchWhen.OnInvoke )]
+        public virtual Company Shipper { get; set; }
     }
 }
