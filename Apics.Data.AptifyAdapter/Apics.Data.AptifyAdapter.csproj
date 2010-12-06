@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Apics.Data.AptifyAdapter</RootNamespace>
     <AssemblyName>Apics.Data.AptifyAdapter</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -31,6 +31,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,6 +67,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libraries\AptifyGenericEntityBase.dll</HintPath>
     </Reference>
+    <Reference Include="AptifyOrdersEntity">
+      <HintPath>Libraries\AptifyOrdersEntity.dll</HintPath>
+    </Reference>
     <Reference Include="AptifyUtility, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f3fa0ecabf9514d9, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libraries\AptifyUtility.dll</HintPath>
@@ -93,6 +97,7 @@
     <Reference Include="log4net">
       <HintPath>..\Libraries\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="NHibernate, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Apics.Data\Libraries\NHibernate.dll</HintPath>
@@ -119,6 +124,7 @@
     <Compile Include="ADO\AptifyTransactionFactory.cs" />
     <Compile Include="ADO\IAptifyTransaction.cs" />
     <Compile Include="AptifyAdapterModule.cs" />
+    <Compile Include="AptifyBackingEntity.cs" />
     <Compile Include="AptifyConnectionStringBuilder.cs" />
     <Compile Include="AptifyEntity.cs" />
     <Compile Include="AptifyServer.cs" />
@@ -139,6 +145,7 @@
     <Compile Include="AptifyDialect.cs" />
     <Compile Include="Event\NHibernateSaveEvent.cs" />
     <Compile Include="Event\NHibernateUpdateEvent.cs" />
+    <Compile Include="Extension\OrderMasterExtensions.cs" />
     <Compile Include="Mapping\AptifyChildEntity.cs" />
     <Compile Include="Mapping\Metadata\AptifyColumnMetadata.cs" />
     <Compile Include="Mapping\Metadata\AptifyEntityMetadata.cs" />
@@ -168,6 +175,10 @@
       <Project>{08974BDC-8F47-4042-A408-3D863C969C6F}</Project>
       <Name>Apics.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Apics.Model\Apics.Model.csproj">
+      <Project>{0AA0AE4A-150B-4A42-89D4-8076202D05FF}</Project>
+      <Name>Apics.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Queries.resx">
@@ -191,6 +202,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

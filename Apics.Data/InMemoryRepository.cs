@@ -41,6 +41,11 @@ namespace Apics.Data
             
         }
 
+        public void Refresh( T entity )
+        {
+            
+        }
+
         public void DeleteAll( )
         {
             this.storage.Clear( );
@@ -116,6 +121,12 @@ namespace Apics.Data
         {
             return this.storage.GetEnumerator( );
         }
+
+        #endregion
+
+        #region IRepository<T> Members
+
+
 
         #endregion
     }

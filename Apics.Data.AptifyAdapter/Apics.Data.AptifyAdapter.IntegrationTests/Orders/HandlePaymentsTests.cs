@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using Apics.Model.Fulfillment;
+using Apics.Data.AptifyAdapter.Extension;
 
 namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
 {
@@ -14,22 +15,24 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
         {
             var orders = GetRepository<Order>( );
 
-            var order = orders.Where( o => o.OrderState.Status.Id == 1 )
+            var order = orders
+                .Where( o => o.OrderState.Status.Id == 1 )
                 .Where( o => o.InitialPaymentAmount > 0.0M )
-                .Where( o => o.Shipments.Any( ) ).First( );
+                .First( o => o.Shipments.Any( ) );
 
-            var orderID = order.Id;
+            var cost = order.Costs.GrandTotal;
+            var shippingCost = Math.Round( ( decimal )new Random( ).NextDouble( ) * 10.0M, 2 );
             var shipment = order.Shipments.First( );
 
             shipment.OverrideShippingCalculation = true;
-            shipment.ShippingCharge = 10.0M;
-            order.Comments += " ";
+            shipment.ShippingCharge = shippingCost;
+            
             GetRepository<Shipment>( ).Update( shipment );
-            orders.Update( order );
-            orders.Evict( order );
 
-            order = orders.GetProxy( orderID );
-            Assert.True( true );
+            orders.Update( order );
+            GetRepository<OrderCosts>( ).Refresh( order.Costs );
+
+            Assert.AreEqual( order.Costs.SubTotal + shippingCost, order.Costs.GrandTotal );
         }
     }
 }

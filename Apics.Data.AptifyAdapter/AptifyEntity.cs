@@ -98,7 +98,7 @@ namespace Apics.Data.AptifyAdapter
                 int id = this.store.Id;
 
                 // Clean objects don't need to do anything
-                if( this.store.Status != EntityStatus.Clean )
+                if( this.store.Status != EntityStatus.Clean || this.Parent == null )
                 {
                     // Save the entity to the Aptify server
                     id = this.server.SaveEntity( this.genericEntity, this.store.Transaction );
@@ -164,7 +164,7 @@ namespace Apics.Data.AptifyAdapter
         private AptifyGenericEntityBase LoadGenericEntity( )
         {
             // Clean entities don't need to be loaded
-            if( this.store.Status == EntityStatus.Clean )
+            if( this.store.Status == EntityStatus.Clean && this.parent != null )
                 return null;
 
             Log.DebugFormat( "Trying to load entity '{0}'", this.table.Entity.Name );
@@ -182,7 +182,7 @@ namespace Apics.Data.AptifyAdapter
                 // Get the name of the dirty column
                 string columnName = this.store.Persister.PropertyNames[ dirtyIndex ];
 
-                // Set the value of the generic entity to what is stored in the storei
+                // Set the value of the generic entity to what is stored in the store
                 AptifyColumnMetadata column;
 
                 bool doCascade =

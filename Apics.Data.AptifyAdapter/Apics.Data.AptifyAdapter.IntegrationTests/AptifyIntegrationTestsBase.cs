@@ -44,7 +44,6 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests
         [TearDown]
         public void AptifyIntegrationTestsBase_TearDown( )
         {
-            Transaction.Commit( );
             Transaction.Dispose( );
         }
     }

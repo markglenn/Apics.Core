@@ -70,5 +70,11 @@ namespace Apics.Data
         /// <returns></returns>
         T GetProxy( Object id );
 
+        /// <summary>
+        /// Refreshes an object from the database, including children
+        /// </summary>
+        /// <param name="entity">Entity to refresh</param>
+        void Refresh( T entity );
+
     }
 }

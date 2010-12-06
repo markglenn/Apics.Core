@@ -6,6 +6,7 @@ using Apics.Model.Location;
 using Apics.Model.User;
 using Castle.ActiveRecord;
 using Apics.Model.Financial;
+using Apics.Data;
 
 namespace Apics.Model.Fulfillment
 {
@@ -14,7 +15,7 @@ namespace Apics.Model.Fulfillment
     /// </summary>
     [ActiveRecord( "OrderMaster", Lazy = true )]
     [DebuggerDisplay( "Order: {Id}" )]
-    public class Order
+    public class Order : ModelBase
     {
         /// <summary>
         /// Order ID
