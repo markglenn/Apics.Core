@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using Apics.Model.Fulfillment;
-using Apics.Data.AptifyAdapter.Extension;
 
 namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
 {
     public class HandlePaymentsTests : AptifyIntegrationTestsBase
     {
         [Test]
-        public void Test( )
+        public void UpdatingShipmentCostsUpdatesOrderCosts( )
         {
             var orders = GetRepository<Order>( );
 
@@ -26,13 +25,12 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
 
             shipment.OverrideShippingCalculation = true;
             shipment.ShippingCharge = shippingCost;
-            
-            GetRepository<Shipment>( ).Update( shipment );
 
             orders.Update( order );
             GetRepository<OrderCosts>( ).Refresh( order.Costs );
 
             Assert.AreEqual( order.Costs.SubTotal + shippingCost, order.Costs.GrandTotal );
         }
+
     }
 }

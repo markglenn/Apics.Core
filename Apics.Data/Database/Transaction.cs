@@ -27,6 +27,11 @@ namespace Apics.Data.Database
 			this.isCommitted = true;
 		}
 
+        public void Flush( )
+        {
+            this.scope.Flush( );
+        }
+
 		#endregion [ ITransaction Members ]
 
 		#region [ IDisposable Members ]

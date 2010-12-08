@@ -38,5 +38,5 @@ namespace Apics.Data
         /// </summary>
         /// <returns>A new connection to the database</returns>
 	    IDbConnection CreateConnection( );
-	}
+    }
 }
