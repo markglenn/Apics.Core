@@ -21,11 +21,11 @@ namespace Apics.Utilities.Tests.Security
         public void GenerateLink_WithNoUrlParameters_AddsTimestampAndHmac( )
         {
             var hmac = new HmacUrlAuthorization( "ABCD" );
-            var url = "http://www.example.com/testurl";
+            var url = new Uri( "http://www.example.com/testurl" );
 
-            var result = hmac.GenerateLink( url );
+            var result = hmac.GenerateLink( url ).ToString( );
 
-            Assert.IsTrue( result.StartsWith( url ) );
+            Assert.IsTrue( result.StartsWith( url.ToString( ) ) );
             Assert.IsTrue( result.Contains( "?timestamp=" ) );
             Assert.IsTrue( result.Contains( "&hmac=" ) );
         }
@@ -34,11 +34,11 @@ namespace Apics.Utilities.Tests.Security
         public void GenerateLink_WithParameters_AddsTimestampAndHmac( )
         {
             var hmac = new HmacUrlAuthorization( "ABCD" );
-            var url = "http://www.example.com/testurl?test=1";
+            var url = new Uri( "http://www.example.com/testurl?test=1" );
 
-            var result = hmac.GenerateLink( url );
+            var result = hmac.GenerateLink( url ).ToString( );
 
-            Assert.IsTrue( result.StartsWith( url ) );
+            Assert.IsTrue( result.StartsWith( url.ToString( ) ) );
             Assert.IsTrue( result.Contains( "&timestamp=" ) );
             Assert.IsTrue( result.Contains( "&hmac=" ) );
         }
@@ -46,9 +46,9 @@ namespace Apics.Utilities.Tests.Security
         [Test]
         public void ValidateUrl_ValidatesHmacEncodedUrl( )
         {
-            var valid = "http://www.example.com/testurl?test=1&timestamp=129331882172255018&hmac=ad2c7db6708ed1856412d9824789181bc117f2fb";
-            var invalid = "http://www.example.com/testurl?test=1&timestamp=129331882172255018&hmac=ad2c7db6708ed1856412d9824789181bc117f2f";
-            var invalid2 = "http://www.example.com";
+            var valid = new Uri( "http://www.example.com/testurl?test=1&timestamp=129331882172255018&hmac=ad2c7db6708ed1856412d9824789181bc117f2fb" );
+            var invalid = new Uri( "http://www.example.com/testurl?test=1&timestamp=129331882172255018&hmac=ad2c7db6708ed1856412d9824789181bc117f2f" );
+            var invalid2 = new Uri( "http://www.example.com" );
 
             Assert.IsTrue( new HmacUrlAuthorization( "ABCD" ).ValidateUrl( valid ) );
             Assert.IsFalse( new HmacUrlAuthorization( "ABCD" ).ValidateUrl( invalid ) );

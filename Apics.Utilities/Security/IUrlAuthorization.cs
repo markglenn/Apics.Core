@@ -7,7 +7,7 @@ namespace Apics.Utilities.Security
 {
     public interface IUrlAuthorization
     {
-        string GenerateLink( string url );
-        bool ValidateUrl( string url );
+        Uri GenerateLink( Uri url );
+        bool ValidateUrl( Uri url );
     }
 }

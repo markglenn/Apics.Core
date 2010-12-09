@@ -33,10 +33,10 @@ namespace Apics.Utilities.Security
         /// Generates the link.
         /// </summary>
         /// <param name="url">The URL.</param>
-        /// <returns>A string containng the hmac</returns>
-        public string GenerateLink( string url )
+        /// <returns>A string containing the HMAC</returns>
+        public Uri GenerateLink( Uri uri )
         {
-            return EncodeHash( url, DateTime.Now.ToFileTimeUtc( ) );
+            return EncodeHash( uri, DateTime.Now.ToFileTimeUtc( ) );
         }
         
         /// <summary>
@@ -44,31 +44,38 @@ namespace Apics.Utilities.Security
         /// </summary>
         /// <param name="url">The URL.</param>
         /// <returns>True if the URL is considered valid</returns>
-        public bool ValidateUrl( string url )
+        public bool ValidateUrl( Uri uri )
         {
-            if ( url == null )
-                throw new ArgumentNullException( "url" );
+            if ( uri == null )
+                throw new ArgumentNullException( "uri" );
 
-            var match = UriRegex.Match( url );
+            var builder = new UriBuilder( uri );
 
-            if ( !match.Success )
+            var hashcode = builder.GetQueryParam( "hmac" );
+
+            if ( hashcode == null )
                 return false;
 
-            var hashcode = HashEncode( match.Groups[ 1 ].Value );
-            var urlCode = match.Groups[ 2 ].Value;
+            builder.RemoveQueryParam( "hmac" );
 
-            return String.Equals( hashcode, urlCode, StringComparison.OrdinalIgnoreCase );
+            return String.Equals( hashcode, HashEncode( builder.Uri ), StringComparison.OrdinalIgnoreCase );
         }
 
         #region [ Private Members ]
         
-        private string EncodeHash( string url, long timestamp )
+        private Uri EncodeHash( Uri uri, long timestamp )
         {
-            StringBuilder sb = new StringBuilder( url )
-                .Append( url.Contains( "?" ) ? "&" : "?" )
-                .AppendFormat( "timestamp={0}", timestamp );
+            UriBuilder builder = new UriBuilder( uri );
 
-            return sb.AppendFormat( "&hmac={0}", HashEncode( sb.ToString( ) ) ).ToString( );
+            builder.SetQueryParam( "timestamp", timestamp.ToString( ) );
+            builder.SetQueryParam( "hmac", HashEncode( builder.Uri.ToString( ) ) );
+
+            return builder.Uri;
+        }
+
+        private string HashEncode( Uri uri )
+        {
+            return HashEncode( uri.ToString( ) );
         }
 
         private string HashEncode( string text )
