@@ -11,6 +11,8 @@ namespace Apics.Data.AptifyAdapter.Mapping.Metadata
     [DebuggerDisplay( "{Name}" )]
     internal class AptifyEntityMetadata
     {
+        #region [ Private Members ]
+
         private readonly IList<AptifyChildEntity> children =
             new List<AptifyChildEntity>( );
 
@@ -19,6 +21,8 @@ namespace Apics.Data.AptifyAdapter.Mapping.Metadata
 
         private readonly IDictionary<string, AptifyTableMetadata> tables =
             new Dictionary<string, AptifyTableMetadata>( );
+
+        #endregion [ Private Members ]
 
         #region [ Public Properties ]
 

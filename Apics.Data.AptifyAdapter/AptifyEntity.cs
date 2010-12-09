@@ -14,6 +14,8 @@ using NHibernate.Impl;
 using NHibernate.Persister.Collection;
 using NHibernate.Persister.Entity;
 using NHibernate.Type;
+using NHibernate.Proxy;
+using System.Collections;
 
 namespace Apics.Data.AptifyAdapter
 {
@@ -85,7 +87,7 @@ namespace Apics.Data.AptifyAdapter
 
             // Load any child items
             if( store.Persister.HasCascades )
-                this.children = LoadChildEntities( );
+                this.children = LoadChildEntities( ).ToArray( );
         }
 
         /// <summary>
@@ -98,7 +100,7 @@ namespace Apics.Data.AptifyAdapter
                 int id = this.store.Id;
 
                 // Clean objects don't need to do anything
-                if( this.store.Status != EntityStatus.Clean )
+                if( this.store.Status != EntityStatus.Clean || this.Parent == null )
                 {
                     // Save the entity to the Aptify server
                     id = this.server.SaveEntity( this.genericEntity, this.store.Transaction );
@@ -111,9 +113,12 @@ namespace Apics.Data.AptifyAdapter
 
                 if( this.children != null )
                 {
-                    foreach( AptifyEntity child in this.children )
+                    foreach ( AptifyEntity child in this.children )
                         child.SaveOrUpdate( );
                 }
+
+                // Are we supposed to refresh?
+                this.store.Session.Refresh( this.store.EntityObject );
 
                 this.store.Status = EntityStatus.Clean;
 
@@ -164,7 +169,7 @@ namespace Apics.Data.AptifyAdapter
         private AptifyGenericEntityBase LoadGenericEntity( )
         {
             // Clean entities don't need to be loaded
-            if( this.store.Status == EntityStatus.Clean )
+            if( this.store.Status == EntityStatus.Clean && this.parent != null )
                 return null;
 
             Log.DebugFormat( "Trying to load entity '{0}'", this.table.Entity.Name );
@@ -182,7 +187,7 @@ namespace Apics.Data.AptifyAdapter
                 // Get the name of the dirty column
                 string columnName = this.store.Persister.PropertyNames[ dirtyIndex ];
 
-                // Set the value of the generic entity to what is stored in the storei
+                // Set the value of the generic entity to what is stored in the store
                 AptifyColumnMetadata column;
 
                 bool doCascade =
@@ -206,8 +211,9 @@ namespace Apics.Data.AptifyAdapter
         {
             // Load which properties require cascading
             CascadeStyle[ ] propertyCascades = this.store.Persister.PropertyCascadeStyles;
-            var childEntities = new List<AptifyEntity>( );
 
+            var session = ( SessionImpl )this.store.Session;
+            
             for( int i = 0; i < propertyCascades.Length; ++i )
             {
                 IType type = this.store.Persister.PropertyTypes[ i ];
@@ -218,23 +224,29 @@ namespace Apics.Data.AptifyAdapter
 
                 // Pull all the child items
                 object child = this.store.Persister.GetPropertyValue( this.store.EntityObject, i, EntityMode.Poco );
-                var session = ( SessionImpl )this.store.Session;
 
-                if( type.IsCollectionType )
-                {
-                    if( this.store.DirtyIndices.Contains( i ) )
-                        childEntities.AddRange( GetChildrenFromCollection( ( IPersistentCollection )child, session ) );
-                }
-                else
-                {
-                    IEntityPersister persister = session.PersistenceContext.GetEntry( child ).Persister;
-                    EntityStore childStore = this.store.CreateChild( child, persister );
+                if ( IsUninitializedProxy( child ) )
+                    continue;
 
-                    childEntities.Add( new AptifyEntity( this, this.server, childStore ) );
-                }
+                foreach ( var dirtyChild in LoadDirtyChild( i, type, child, session ).ToList( ) )
+                    yield return dirtyChild;
             }
+        }
 
-            return childEntities;
+        private IEnumerable<AptifyEntity> LoadDirtyChild( int index, IType type, object child, SessionImpl session )
+        {
+           if ( type.IsCollectionType )
+                return GetChildrenFromCollection( ( IPersistentCollection )child, session );
+
+            // This child is not dirty
+            if ( !this.store.DirtyIndices.Contains( index ) )
+               return new AptifyEntity[] { };
+            
+            /// Find the persister
+            var persister = session.GetEntityPersister( session.GetEntityName( child ), child );
+            var childStore = this.store.CreateChild( child, persister );
+            
+            return new[] { new AptifyEntity( this, this.server, childStore ) };
         }
 
         /// <summary>
@@ -250,10 +262,10 @@ namespace Apics.Data.AptifyAdapter
                 session.PersistenceContext.GetCollectionEntry( items ).LoadedPersister;
             IEntityPersister persister = ( ( AbstractCollectionPersister )collectionPersister ).ElementPersister;
 
-            return from object item in items.Entries( collectionPersister )
-                select this.store.CreateChild( item, persister )
-                into childStore
-                select new AptifyEntity( this, this.server, childStore );
+            return from object item in ( IEnumerable )items
+                   where !IsUninitializedProxy( item )
+                   select this.store.CreateChild( item, persister ) into childStore
+                   select new AptifyEntity( this, this.server, childStore );
         }
 
         /// <summary>
@@ -287,6 +299,19 @@ namespace Apics.Data.AptifyAdapter
             }
 
             genericEntityBase.SetValue( column.Name, state );
+        }
+
+        /// <summary>
+        /// Check to see if an object is a proxy
+        /// </summary>
+        /// <param name="entity">Entity to check</param>
+        /// <returns>True if the entity is a proxy and uninitialized</returns>
+        private static bool IsUninitializedProxy( object entity )
+        {
+            var proxy = entity as INHibernateProxy;
+
+            return ( proxy != null && proxy.HibernateLazyInitializer.IsUninitialized );
+                
         }
 
         #endregion [ Private Methods ]

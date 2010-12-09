@@ -15,5 +15,7 @@ namespace Apics.Model.Financial
         [Property]
         public virtual string Name { get; set; }
 
+        [Property]
+        public virtual string Type { get; set; }
     }
 }

@@ -34,6 +34,8 @@ namespace Apics.Data.AptifyAdapter.Store
     /// </summary>
     internal class EntityStore
     {
+        #region [ Private Members ]
+        
         private readonly object entityObject;
         private readonly IEntityPersister persister;
         private readonly IEventSource session;
@@ -42,6 +44,8 @@ namespace Apics.Data.AptifyAdapter.Store
         private object[ ] currentState;
 
         private EntityStatus status;
+
+        #endregion [ Private Members ]
 
         #region [ Public Properties ]
 
@@ -60,8 +64,19 @@ namespace Apics.Data.AptifyAdapter.Store
         /// </summary>
         internal EntityStatus Status
         {
-            get { return this.status; }
-            set { this.status = value; }
+            get
+            {
+                var o = this.entityObject as ModelBase;
+
+                if ( o != null && o.ForceSave && this.status == EntityStatus.Clean )
+                    return EntityStatus.Dirty;
+
+                return this.status;
+            }
+            set
+            {
+                this.status = value;
+            }
         }
 
         /// <summary>
@@ -168,7 +183,7 @@ namespace Apics.Data.AptifyAdapter.Store
             // Check the status based on the dirty indices
             if( entry == null || !entry.ExistsInDatabase )
                 this.status = EntityStatus.New;
-            else if( this.DirtyIndices.Count( ) != 0 )
+            else if( this.DirtyIndices.Any( ) )
                 this.status = EntityStatus.Dirty;
             else
                 this.status = EntityStatus.Clean;

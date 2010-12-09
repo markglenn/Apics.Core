@@ -15,7 +15,7 @@ namespace Apics.Data.AptifyAdapter.Configuration
             if ( section == null )
                 return null;
 
-            var serializer = new XmlSerializer( typeof( AptifyModulesConfigurator ) );
+            var serializer = new XmlSerializer( typeof( AptifyModuleSettingConfiguration ) );
 
             using ( var reader = new XmlNodeReader( section ) )
                 return serializer.Deserialize( reader );
@@ -27,10 +27,11 @@ namespace Apics.Data.AptifyAdapter.Configuration
     [Serializable, XmlRoot( "aptify.modules" )]
     public class AptifyModuleSettingConfiguration
     {
-        [XmlArray( "modules" ), XmlArrayItem( "module" )]
+        [XmlArray( "modules" ), XmlArrayItem( "module", typeof( AptifyModule ) )]
         public AptifyModule[ ] Modules { get; set; }
     }
 
+    [Serializable]
     public class AptifyModule
     {
         [XmlAttribute( "type" )]

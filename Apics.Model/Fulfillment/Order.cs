@@ -6,6 +6,7 @@ using Apics.Model.Location;
 using Apics.Model.User;
 using Castle.ActiveRecord;
 using Apics.Model.Financial;
+using Apics.Data;
 
 namespace Apics.Model.Fulfillment
 {
@@ -14,8 +15,17 @@ namespace Apics.Model.Fulfillment
     /// </summary>
     [ActiveRecord( "OrderMaster", Lazy = true )]
     [DebuggerDisplay( "Order: {Id}" )]
-    public class Order
+    public class Order : ModelBase
     {
+        public Order( )
+        {
+            this.Items = new List<OrderItem>( );
+            this.OrderState = new OrderState( );
+            this.Shipments = new List<Shipment>( );
+            this.PaymentInformation = new PaymentInformation( );
+            this.Costs = new OrderCosts( );
+        }
+
         /// <summary>
         /// Order ID
         /// </summary>
@@ -52,59 +62,65 @@ namespace Apics.Model.Fulfillment
         [OneToOne]
         public virtual OrderCosts Costs { get; set; }
 
+        [Property]
+        public virtual decimal? InitialPaymentAmount { get; set; }
+
         /// <summary>
         /// Person receiving this shipment
         /// </summary>
-        [BelongsTo( "ShipToID" )]
+        [BelongsTo( "ShipToID", Lazy = FetchWhen.OnInvoke )]
         public virtual Person ShipToPerson { get; set; }
 
         /// <summary>
         /// Person that was billed
         /// </summary>
-        [BelongsTo( "BillToID" )]
+        [BelongsTo( "BillToID", Lazy = FetchWhen.OnInvoke )]
         public virtual Person BillToPerson { get; set; }
 
         /// <summary>
         /// Billing company
         /// </summary>
-        [BelongsTo( "BillToCompanyID" )]
+        [BelongsTo( "BillToCompanyID", Lazy = FetchWhen.OnInvoke )]
         public virtual Company BillToCompany { get; set; }
 
         /// <summary>
         /// Shipping company
         /// </summary>
-        [BelongsTo( "ShipToCompanyID" )]
+        [BelongsTo( "ShipToCompanyID", Lazy = FetchWhen.OnInvoke )]
         public virtual Company ShipToCompany { get; set; }
 
         /// <summary>
         /// Billing phone number
         /// </summary>
-        [BelongsTo( "BillToPhoneID" )]
+        [BelongsTo( "BillToPhoneID", Lazy = FetchWhen.OnInvoke )]
         public virtual PhoneNumber BillToPhone { get; set; }
 
         /// <summary>
         /// The address to which the order is being shipped
         /// </summary>
-        [BelongsTo( "ShipToAddressID" )]
+        [BelongsTo( "ShipToAddressID", Lazy = FetchWhen.OnInvoke )]
         public virtual Address ShipToAddress { get; set; }
 
         /// <summary>
         /// Shipping phone number
         /// </summary>
-        [BelongsTo( "ShipToPhoneID" )]
+        [BelongsTo( "ShipToPhoneID", Lazy = FetchWhen.OnInvoke )]
         public virtual PhoneNumber ShipToPhone { get; set; }
 
         /// <summary>
         /// The address to which the order is being billed
         /// </summary>
-        [BelongsTo( "BillToAddressID" )]
+        [BelongsTo( "BillToAddressID", Lazy = FetchWhen.OnInvoke )]
         public virtual Address BillToAddress { get; set; }
 
-        [BelongsTo( "ShipTypeID" )]
+        [BelongsTo( "ShipTypeID", Lazy = FetchWhen.OnInvoke )]
         public virtual ShipType ShipType { get; set; }
 
-        [BelongsTo( "PaymentInformationID" )]
+        [BelongsTo( "PaymentInformationID", Cascade = CascadeEnum.All, Lazy = FetchWhen.OnInvoke )]
         public virtual PaymentInformation PaymentInformation { get; set; }
+
+        [HasMany( Lazy = true, Cascade = ManyRelationCascadeEnum.All )]
+        public virtual IList<Shipment> Shipments { get; set; }
     }
 
     public static class OrderQueries

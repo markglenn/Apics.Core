@@ -65,6 +65,7 @@
     <Compile Include="Fulfillment\Product.cs" />
     <Compile Include="Fulfillment\ProductCategory.cs" />
     <Compile Include="Fulfillment\ProductType.cs" />
+    <Compile Include="Fulfillment\Shipment.cs" />
     <Compile Include="Fulfillment\ShipType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />

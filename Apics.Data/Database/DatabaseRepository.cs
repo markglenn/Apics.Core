@@ -50,6 +50,11 @@ namespace Apics.Data.Database
 			ActiveRecordMediator.Evict( entity );
 		}
 
+        public void Refresh( T entity )
+        {
+            ActiveRecordMediator<T>.Refresh( entity );
+        }
+
 		#endregion [ IRepository<T> Members ]
 
 		#region [ IEnumerable<T> Members ]
@@ -123,14 +128,15 @@ namespace Apics.Data.Database
 
 	    #endregion [ IRepository Members ]
 
-        #region IRepository Members
+        #region [ IRepository Members ]
 
         public object GetById( object id )
         {
             return ActiveRecordMediator<T>.FindByPrimaryKey( id );
         }
 
-        #endregion
+        #endregion [ IRepository Members ]
+
     }
 }
 

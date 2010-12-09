@@ -24,5 +24,10 @@ namespace Apics.Data
         /// Commits the transaction
         /// </summary>
         void Commit( );
+
+        /// <summary>
+        /// Flushes current changes to the database
+        /// </summary>
+        void Flush( );
     }
 }
