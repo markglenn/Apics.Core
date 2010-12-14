@@ -16,7 +16,7 @@ using Ninject.Modules;
 namespace Apics.Data.AptifyAdapter
 {
     /// <summary>
-    /// Dependency injection module to intialize the aptify adapter properly
+    /// Dependency injection module to initialize the aptify adapter properly
     /// </summary>
     public class AptifyAdapterModule : NinjectModule
     {

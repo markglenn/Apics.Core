@@ -6,6 +6,7 @@ using NHibernate.UserTypes;
 
 namespace Apics.Data.UserType
 {
+    [Serializable]
     public class NChar : IUserType
     {
         #region [ Implementation of IUserType ]

@@ -8,6 +8,7 @@ using NHibernate.Engine;
 using NHibernate.Event;
 using NHibernate.Persister.Entity;
 using NHibernateStatus = NHibernate.Engine.Status;
+using NHibernate.Metadata;
 
 namespace Apics.Data.AptifyAdapter.Store
 {
@@ -37,9 +38,10 @@ namespace Apics.Data.AptifyAdapter.Store
         #region [ Private Members ]
         
         private readonly object entityObject;
-        private readonly IEntityPersister persister;
+        private readonly IClassMetadata metadata;
         private readonly IEventSource session;
         private readonly AptifyNHibernateTransaction transaction;
+        private readonly IEntityPersister persister;
 
         private object[ ] currentState;
 
@@ -85,14 +87,6 @@ namespace Apics.Data.AptifyAdapter.Store
         internal IEnumerable<int> DirtyIndices { get; private set; }
 
         /// <summary>
-        /// NHibernate entity persister
-        /// </summary>
-        internal IEntityPersister Persister
-        {
-            get { return this.persister; }
-        }
-
-        /// <summary>
         /// NHibernate entity to store
         /// </summary>
         internal object EntityObject
@@ -105,8 +99,8 @@ namespace Apics.Data.AptifyAdapter.Store
         /// </summary>
         public int Id
         {
-            get { return ( int )this.persister.GetIdentifier( this.entityObject, EntityMode.Poco ); }
-            set { this.persister.SetIdentifier( this.entityObject, value, EntityMode.Poco ); }
+            get { return ( int )this.metadata.GetIdentifier( this.entityObject, EntityMode.Poco ); }
+            set { this.metadata.SetIdentifier( this.entityObject, value, EntityMode.Poco ); }
         }
 
         /// <summary>
@@ -125,22 +119,23 @@ namespace Apics.Data.AptifyAdapter.Store
             get { return this.session; }
         }
 
+        public IEntityPersister Persister
+        {
+            get { return this.persister; }
+        }
+
         #endregion [ Public Properties ]
 
         internal EntityStore( IEventSource session, Object entityObject )
-            : this( session, entityObject, session.PersistenceContext.GetEntry( entityObject ).Persister )
         {
-        }
-
-        internal EntityStore( IEventSource session, Object entityObject, IEntityPersister persister )
-        {
-            if( session.TransactionInProgress )
+            if ( session.TransactionInProgress )
                 this.transaction = ( AptifyNHibernateTransaction )session.Transaction;
 
             this.entityObject = entityObject;
             this.session = session;
-            this.persister = persister;
+            this.metadata = session.SessionFactory.GetClassMetadata( entityObject.GetType( ) );
 
+            persister = this.session.GetEntityPersister( this.metadata.EntityName, entityObject );
             LoadEntityState( );
         }
 
@@ -159,9 +154,9 @@ namespace Apics.Data.AptifyAdapter.Store
             this.session.Refresh( this.entityObject, LockMode.None );
         }
 
-        internal EntityStore CreateChild( object item, IEntityPersister childPersister )
+        internal EntityStore CreateChild( object item )
         {
-            return new EntityStore( this.session, item, childPersister );
+            return new EntityStore( this.session, item );
         }
 
         #region [ Private Methods ]
@@ -171,11 +166,10 @@ namespace Apics.Data.AptifyAdapter.Store
         /// </summary>
         private void LoadEntityState( )
         {
-            // Pull the entity entry from the give instance
-            EntityEntry entry = this.session.PersistenceContext.GetEntry( this.entityObject );
-
             // Pull in the values of all the 
-            this.currentState = this.persister.GetPropertyValues( this.entityObject, EntityMode.Poco );
+            this.currentState = this.metadata.GetPropertyValues( this.entityObject, EntityMode.Poco );
+
+            var entry = this.session.PersistenceContext.GetEntry( this.entityObject );
 
             // Get the dirty indices
             this.DirtyIndices = GetDirtyIndices( entry, this.currentState );
@@ -230,7 +224,7 @@ namespace Apics.Data.AptifyAdapter.Store
         /// <returns>True if the entity is not housed within the session</returns>
         private static bool IsTransient( EntityEntry entry )
         {
-            if( entry == null )
+            if ( entry == null || ( ( int )entry.Id ) == 0 )
                 return true;
 
             // Proxy entities are considered in the session

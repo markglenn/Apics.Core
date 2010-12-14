@@ -11,6 +11,7 @@ using Castle.ActiveRecord.Framework;
 using Castle.ActiveRecord.Framework.Internal;
 using log4net;
 using ConfigEnvironment = NHibernate.Cfg.Environment;
+using Apics.Data.AptifyAdapter.Event;
 
 namespace Apics.Data.AptifyAdapter
 {
@@ -76,6 +77,12 @@ namespace Apics.Data.AptifyAdapter
         public override IDbConnection CreateConnection( )
         {
             return this.server.CreateConnection( );
+        }
+
+        protected override void OnSetAdvancedConfiguration( NHibernate.Cfg.Configuration nhibernateConfig )
+        {
+            //InterceptorFactory.Create = ( ) => { return new AptifyInterceptor( ); };
+            base.OnSetAdvancedConfiguration( nhibernateConfig );
         }
 
         #endregion [ Overrides of DataStoreBase ]

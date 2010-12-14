@@ -25,10 +25,8 @@ namespace Apics.Data.AptifyAdapter.Event
 
         public override void Register( EventListeners eventListeners )
         {
-            IEnumerable<ISaveOrUpdateEventListener> listeners =
-                eventListeners.SaveOrUpdateEventListeners.Union( new[ ] { this } );
-
-            eventListeners.SaveOrUpdateEventListeners = listeners.ToArray( );
+            eventListeners.SaveEventListeners = new[ ] { this };
+            eventListeners.SaveOrUpdateEventListeners = new[ ] { this };
         }
     }
 }

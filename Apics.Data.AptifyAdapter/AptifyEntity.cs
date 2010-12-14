@@ -243,8 +243,7 @@ namespace Apics.Data.AptifyAdapter
                return new AptifyEntity[] { };
             
             /// Find the persister
-            var persister = session.GetEntityPersister( session.GetEntityName( child ), child );
-            var childStore = this.store.CreateChild( child, persister );
+            var childStore = this.store.CreateChild( child );
             
             return new[] { new AptifyEntity( this, this.server, childStore ) };
         }
@@ -264,7 +263,7 @@ namespace Apics.Data.AptifyAdapter
 
             return from object item in ( IEnumerable )items
                    where !IsUninitializedProxy( item )
-                   select this.store.CreateChild( item, persister ) into childStore
+                   select this.store.CreateChild( item ) into childStore
                    select new AptifyEntity( this, this.server, childStore );
         }
 

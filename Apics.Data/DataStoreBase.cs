@@ -40,7 +40,7 @@ namespace Apics.Data
 				{ ConfigEnvironment.Dialect, dialect.Dialect },
 				{ ConfigEnvironment.ConnectionString, connectionString },
 				{ ConfigEnvironment.ProxyFactoryFactoryClass, typeof( ProxyFactoryFactory ).AssemblyQualifiedName },
-				{ ConfigEnvironment.ConnectionProvider, connectionProvider.AssemblyQualifiedName },
+				{ ConfigEnvironment.ConnectionProvider, connectionProvider.AssemblyQualifiedName }
 			};
 
 			// Setup the advanced properties
@@ -83,6 +83,7 @@ namespace Apics.Data
 
 		protected virtual void OnSetAdvancedConfiguration( Configuration nhibernateConfig )
 		{
+            nhibernateConfig.SetProperty( ConfigEnvironment.ShowSql, "true" );
 			// Do nothing
 		}
 
