@@ -212,8 +212,6 @@ namespace Apics.Data.AptifyAdapter
             // Load which properties require cascading
             CascadeStyle[ ] propertyCascades = this.store.Persister.PropertyCascadeStyles;
 
-            var session = ( SessionImpl )this.store.Session;
-            
             for( int i = 0; i < propertyCascades.Length; ++i )
             {
                 IType type = this.store.Persister.PropertyTypes[ i ];
@@ -228,15 +226,15 @@ namespace Apics.Data.AptifyAdapter
                 if ( IsUninitializedProxy( child ) )
                     continue;
 
-                foreach ( var dirtyChild in LoadDirtyChild( i, type, child, session ).ToList( ) )
+                foreach ( var dirtyChild in LoadDirtyChild( i, type, child ).ToList( ) )
                     yield return dirtyChild;
             }
         }
 
-        private IEnumerable<AptifyEntity> LoadDirtyChild( int index, IType type, object child, SessionImpl session )
+        private IEnumerable<AptifyEntity> LoadDirtyChild( int index, IType type, object child )
         {
            if ( type.IsCollectionType )
-                return GetChildrenFromCollection( ( IPersistentCollection )child, session );
+                return GetChildrenFromCollection( ( IEnumerable )child );
 
             // This child is not dirty
             if ( !this.store.DirtyIndices.Contains( index ) )
@@ -254,14 +252,9 @@ namespace Apics.Data.AptifyAdapter
         /// <param name="items"></param>
         /// <param name="session"></param>
         /// <returns></returns>
-        private IEnumerable<AptifyEntity> GetChildrenFromCollection( IPersistentCollection items,
-            ISessionImplementor session )
+        private IEnumerable<AptifyEntity> GetChildrenFromCollection( IEnumerable items )
         {
-            ICollectionPersister collectionPersister =
-                session.PersistenceContext.GetCollectionEntry( items ).LoadedPersister;
-            IEntityPersister persister = ( ( AbstractCollectionPersister )collectionPersister ).ElementPersister;
-
-            return from object item in ( IEnumerable )items
+            return from object item in items
                    where !IsUninitializedProxy( item )
                    select this.store.CreateChild( item ) into childStore
                    select new AptifyEntity( this, this.server, childStore );
