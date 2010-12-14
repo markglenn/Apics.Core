@@ -23,7 +23,7 @@ namespace Apics.Data.Database
 			if ( entity == null )
 				throw new ArgumentNullException( "entity" );
 			
-			ActiveRecordMediator<T>.Create( entity );
+			ActiveRecordMediator<T>.Save( entity );
 		}
 
 		public void Update( T entity )
