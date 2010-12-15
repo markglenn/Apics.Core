@@ -132,7 +132,7 @@ namespace Apics.Data
 
         public virtual ISession CreateSession( )
         {
-            return new DatabaseSession( new SessionScope( ) );
+            return new DatabaseSession( new SessionScope( FlushAction.Never ) );
         }
 
 		#endregion [ IDataStore Members ]
