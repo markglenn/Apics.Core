@@ -121,6 +121,10 @@ namespace Apics.Model.Fulfillment
 
         [HasMany( Lazy = true, Cascade = ManyRelationCascadeEnum.All )]
         public virtual IList<Shipment> Shipments { get; set; }
+
+        [BelongsTo( "EmployeeID", NotNull = true, Lazy = FetchWhen.OnInvoke )]
+        public virtual Employee Employee { get; set; }
+
     }
 
     public static class OrderQueries

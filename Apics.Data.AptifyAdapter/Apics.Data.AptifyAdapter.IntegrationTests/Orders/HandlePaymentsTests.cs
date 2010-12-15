@@ -41,15 +41,15 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
 
             var order = new Order
             {
-                BillToPerson = GetRepository<Person>( ).GetProxy( 1684190 ),
-                ShipToPerson = GetRepository<Person>( ).GetProxy( 1684190 ),
+                BillToPerson = GetRepository<Person>( ).GetProxy( 1744343 ),
+                ShipToPerson = GetRepository<Person>( ).GetProxy( 1744343 ),
             };
 
             var item = new OrderItem
             {
                 Product = GetRepository<Product>( ).GetProxy( 5795 ),
                 Quantity = 1,
-                Price = 200
+                Price = 1649
             };
 
             order.Items.Add( item );
@@ -57,12 +57,28 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
             order.PaymentInformation.PaymentType = GetRepository<PaymentType>( ).GetProxy( 1 );
             order.PaymentInformation.CCAccountNumber = "4111111111111111";
             order.PaymentInformation.CCExpireDate = DateTime.Today.AddYears( 1 );
-            order.InitialPaymentAmount = 200;
+            //order.PaymentInformation.PONumber = "1234";
+            //order.InitialPaymentAmount = 200;
 
             order.OrderState.Status = GetRepository<OrderStatus>( ).GetProxy( 1 );
             order.OrderState.Type = GetRepository<OrderType>( ).GetProxy( 1 );
+            order.ShipType = GetRepository<ShipType>( ).GetProxy( 1 );
+            order.Employee = GetRepository<Employee>( ).GetProxy( 1 );
 
             orders.Insert( order );
+        }
+
+        [Test]
+        public void TestCreditCardRetrieval( )
+        {
+            var orders = GetRepository<Order>( );
+
+            var order = orders
+                .Where( o => o.PaymentInformation != null )
+                .Where( o => o.PaymentInformation.PaymentType != null )
+                .Where( o => o.PaymentInformation.PaymentType.Id == 1 )
+                .First( );
+            
         }
     }
 }

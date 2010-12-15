@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
+using Apics.Model.Location;
 
 namespace Apics.Model.User
 {
@@ -23,10 +24,28 @@ namespace Apics.Model.User
         [Property]
         public virtual string LastName { get; set; }
 
-        [HasMany]
-        public virtual IList<PersonAddress> Addresses { get; set; }
+        [BelongsTo( "AddressID", Lazy = FetchWhen.OnInvoke )]
+        public virtual Address Address { get; set; }
 
-        [BelongsTo( "PhoneID" )]
+        [BelongsTo( "BillingAddressID", Lazy = FetchWhen.OnInvoke )]
+        public virtual Address BillingAddress { get; set; }
+
+        [BelongsTo( "HomeAddressID", Lazy = FetchWhen.OnInvoke )]
+        public virtual Address HomeAddress { get; set; }
+
+        [BelongsTo( "CompanyID", Lazy = FetchWhen.OnInvoke )]
+        public virtual Company Company { get; set; }
+
+        [Property]
+        public virtual string PreferredAddress { get; set; }
+
+        [Property]
+        public virtual string PreferredShippingAddress { get; set; }
+
+        [Property]
+        public virtual string PreferredBillingAddress { get; set; }
+
+        [BelongsTo( "PhoneID", Lazy = FetchWhen.OnInvoke )]
         public virtual PhoneNumber Phone { get; set; }
 
         [Property]

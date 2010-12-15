@@ -83,6 +83,33 @@ namespace Apics.Data.AptifyAdapter
             return entity;
         }
 
+        internal AptifyGenericEntityBase GetEntity( string name, int id )
+        {
+            return this.application.GetEntityObject( name, ( long )id );
+        }
+
+        public AptifyGenericEntityBase GetEntity( object entity )
+        {
+            var aptifyEntity = this.Tables.GetEntityMetadata( entity );
+            EntityInfo info = this.application.get_Entity( aptifyEntity.Id );
+
+            // Reflection magic to get the ID.  Let's hope nobody checks this.
+            var prop = (
+                from p in entity.GetType( ).GetProperties( )
+                where p.Name.Equals( "id", StringComparison.InvariantCultureIgnoreCase )
+                select p ).FirstOrDefault( );
+
+            if ( prop == null )
+                throw new InvalidOperationException( "Entity does not have an ID property" );
+
+            if ( !prop.PropertyType.IsValueType )
+                throw new InvalidOperationException( "Entity's ID is not a valid type.  Please use an int or long" );
+
+            long id = Convert.ToInt64( prop.GetValue( entity, null ) );
+
+            return info.GetEntityObject( id );
+        }
+
         /// <summary>
         /// Gets a child entity from the server
         /// </summary>

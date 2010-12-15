@@ -32,7 +32,7 @@ namespace Apics.Data.AptifyAdapter
 
         public override void Load( )
         {
-            // Make sure to load dlls from the DB if required
+            // Make sure to load DLLs from the DB if required
             AppDomain.CurrentDomain.AssemblyResolve += OnAssembyResolve;
 
             Bind<IDialect>( ).To<AptifyDialect>( ).InSingletonScope( );

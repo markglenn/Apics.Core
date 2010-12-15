@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -8,14 +9,9 @@ using Apics.Data.AptifyAdapter.Store;
 using Aptify.Framework.BusinessLogic.GenericEntity;
 using log4net;
 using NHibernate;
-using NHibernate.Collection;
 using NHibernate.Engine;
-using NHibernate.Impl;
-using NHibernate.Persister.Collection;
-using NHibernate.Persister.Entity;
-using NHibernate.Type;
 using NHibernate.Proxy;
-using System.Collections;
+using NHibernate.Type;
 
 namespace Apics.Data.AptifyAdapter
 {
