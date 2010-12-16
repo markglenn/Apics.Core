@@ -44,7 +44,7 @@ namespace Apics.Data.AptifyAdapter.ADO
 
         public bool IsInDistributedActiveTransaction( ISessionImplementor session )
         {
-            return false;
+            return true;
         }
 
         #endregion

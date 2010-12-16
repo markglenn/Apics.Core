@@ -6,9 +6,11 @@ using NUnit.Framework;
 using Apics.Model.Fulfillment;
 using Apics.Model.User;
 using Apics.Model.Financial;
+using Ninject;
 
 namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
 {
+    [TestFixture]
     public class HandlePaymentsTests : AptifyIntegrationTestsBase
     {
         [Test]
@@ -68,7 +70,7 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
             orders.Insert( order );
         }
 
-        [Test]
+        //[Test]
         public void TestCreditCardRetrieval( )
         {
             var orders = GetRepository<Order>( );
@@ -78,7 +80,12 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
                 .Where( o => o.PaymentInformation.PaymentType != null )
                 .Where( o => o.PaymentInformation.PaymentType.Id == 1 )
                 .First( );
-            
+
+            var server = Kernel.Get<AptifyServer>( );
+
+            var entity = server.GetEntity( order );
+
+            Assert.IsNotEmpty( ( string )entity.GetField( "CCAccountNumber" ).Value );
         }
     }
 }

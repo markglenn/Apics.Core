@@ -59,6 +59,7 @@ namespace Apics.Data.AptifyAdapter
         {
             Log.DebugFormat( "Creating aptify entity for {0}", entityMetadata.Name );
 
+            this.application.UserCredentials.DefaultTransactionID = String.Empty;
             EntityInfo info = this.application.get_Entity( entityMetadata.Id );
             AptifyGenericEntityBase entity;
 
@@ -68,6 +69,7 @@ namespace Apics.Data.AptifyAdapter
                 case EntityStatus.Clean:
                 case EntityStatus.Dirty:
                     entity = info.GetEntityObject( store.Id );
+                    
                     break;
 
                 case EntityStatus.New:
@@ -77,6 +79,7 @@ namespace Apics.Data.AptifyAdapter
                 default:
                     throw new InvalidOperationException( "Unknown entity status " + store.Status );
             }
+
 
             Log.DebugFormat( "Successfully created aptify entity for {0}", entityMetadata.Name );
 

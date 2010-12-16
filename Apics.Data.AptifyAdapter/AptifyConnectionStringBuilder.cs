@@ -100,7 +100,7 @@ namespace Apics.Data.AptifyAdapter
             // Define the Aptify credentials
             this.credentials = new UserCredentials(
                 this.dataSource, this.initialCatalog, this.initialCatalog,
-                this.trustedConnection, -1, this.userId, this.password,
+                this.trustedConnection, 11, this.userId, this.password,
                 null, false, -1, true );
         }
 
