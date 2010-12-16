@@ -36,6 +36,9 @@ namespace Apics.Model.User
         [BelongsTo( "CompanyID", Lazy = FetchWhen.OnInvoke )]
         public virtual Company Company { get; set; }
 
+        [BelongsTo("MemberTypeID", Lazy = FetchWhen.OnInvoke)]
+        public virtual MemberType MemberType { get; set; }
+
         [Property]
         public virtual string PreferredAddress { get; set; }
 

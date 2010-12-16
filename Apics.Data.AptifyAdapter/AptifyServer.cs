@@ -128,6 +128,10 @@ namespace Apics.Data.AptifyAdapter
             AptifySubTypeBase subType = parent.GenericEntity.SubTypes[ entityMetadata.Name ];
             AptifyGenericEntityBase entity;
 
+            // This is not a child entity within Aptify
+            if (subType == null)
+                return GetEntity(entityMetadata, store);
+
             switch( store.Status )
             {
                 case EntityStatus.Clean:
