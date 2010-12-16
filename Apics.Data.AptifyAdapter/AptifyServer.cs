@@ -94,6 +94,8 @@ namespace Apics.Data.AptifyAdapter
         public AptifyGenericEntityBase GetEntity( object entity )
         {
             var aptifyEntity = this.Tables.GetEntityMetadata( entity );
+            
+            this.application.UserCredentials.DefaultTransactionID = String.Empty;
             EntityInfo info = this.application.get_Entity( aptifyEntity.Id );
 
             // Reflection magic to get the ID.  Let's hope nobody checks this.

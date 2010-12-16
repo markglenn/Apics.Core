@@ -16,6 +16,7 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
         [Test]
         public void UpdatingShipmentCostsUpdatesOrderCosts( )
         {
+
             var orders = GetRepository<Order>( );
 
             var order = orders
@@ -31,13 +32,13 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
             shipment.ShippingCharge = shippingCost;
 
             orders.Update( order );
-            
+
             GetRepository<OrderCosts>( ).Refresh( order.Costs );
             Assert.AreEqual( order.Costs.SubTotal + shippingCost, order.Costs.GrandTotal );
         }
 
         [Test]
-        public void TestOrderCreation( )
+        public void TestCreditCardOrderCreation( )
         {
             var orders = GetRepository<Order>( );
 
@@ -59,8 +60,6 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
             order.PaymentInformation.PaymentType = GetRepository<PaymentType>( ).GetProxy( 1 );
             order.PaymentInformation.CCAccountNumber = "4111111111111111";
             order.PaymentInformation.CCExpireDate = DateTime.Today.AddYears( 1 );
-            //order.PaymentInformation.PONumber = "1234";
-            //order.InitialPaymentAmount = 200;
 
             order.OrderState.Status = GetRepository<OrderStatus>( ).GetProxy( 1 );
             order.OrderState.Type = GetRepository<OrderType>( ).GetProxy( 1 );
@@ -70,7 +69,7 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
             orders.Insert( order );
         }
 
-        //[Test]
+        [Test]
         public void TestCreditCardRetrieval( )
         {
             var orders = GetRepository<Order>( );
@@ -86,6 +85,39 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
             var entity = server.GetEntity( order );
 
             Assert.IsNotEmpty( ( string )entity.GetField( "CCAccountNumber" ).Value );
+        }
+
+
+        [Test]
+        public void TestPurchaseOrderCreation( )
+        {
+            var orders = GetRepository<Order>( );
+
+            var order = new Order
+            {
+                BillToPerson = GetRepository<Person>( ).GetProxy( 1744343 ),
+                ShipToPerson = GetRepository<Person>( ).GetProxy( 1744343 ),
+            };
+
+            var item = new OrderItem
+            {
+                Product = GetRepository<Product>( ).GetProxy( 5795 ),
+                Quantity = 1,
+                Price = 1649
+            };
+
+            order.Items.Add( item );
+
+            order.PaymentInformation.PaymentType = GetRepository<PaymentType>( ).GetProxy( 6 );
+            order.PaymentInformation.PONumber = "1234";
+            order.InitialPaymentAmount = 200;
+
+            order.OrderState.Status = GetRepository<OrderStatus>( ).GetProxy( 1 );
+            order.OrderState.Type = GetRepository<OrderType>( ).GetProxy( 1 );
+            order.ShipType = GetRepository<ShipType>( ).GetProxy( 1 );
+            order.Employee = GetRepository<Employee>( ).GetProxy( 1 );
+
+            orders.Insert( order );
         }
     }
 }
