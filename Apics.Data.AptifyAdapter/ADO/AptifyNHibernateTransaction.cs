@@ -140,7 +140,7 @@ namespace Apics.Data.AptifyAdapter.ADO
 
                 if( this.session.FlushMode != FlushMode.Never )
                 {
-                    this.session.Flush( );
+                    //this.session.Flush( );
                 }
 
                 NotifyLocalSynchsBeforeTransactionCompletion( );

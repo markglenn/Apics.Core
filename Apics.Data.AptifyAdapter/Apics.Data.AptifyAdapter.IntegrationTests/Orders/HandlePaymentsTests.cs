@@ -67,6 +67,7 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
             order.Employee = GetRepository<Employee>( ).GetProxy( 1 );
 
             orders.Insert( order );
+            this.Transaction.Commit( );
         }
 
         [Test]
