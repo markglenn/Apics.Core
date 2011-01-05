@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Apics.Data.AptifyAdapter.ADO
 {
-    public interface IAptifyTransaction : IDisposable
+    public interface IAptifyTransaction
     {
         string TransactionName { get; }
     }

@@ -13,6 +13,7 @@ using log4net;
 using Ninject;
 using Ninject.Modules;
 using Aptify.Framework.Application;
+using System.Security.Permissions;
 
 namespace Apics.Data.AptifyAdapter
 {

@@ -47,7 +47,7 @@ namespace Apics.Data.AptifyAdapter.ADO
             get { return this.isolationLevel; }
         }
 
-        #region IAptifyTransaction Members
+        #region [ IAptifyTransaction Members ]
 
         /// <summary>
         /// Name of the transaction used in the reads/writes
@@ -57,7 +57,7 @@ namespace Apics.Data.AptifyAdapter.ADO
             get { return this.transactionName; }
         }
 
-        #endregion
+        #endregion [ IAptifyTransaction Members ]
 
         /// <summary>
         /// Commits the transaction
@@ -74,5 +74,6 @@ namespace Apics.Data.AptifyAdapter.ADO
         {
             this.dataAction.RollbackTransaction( this.transactionName );
         }
+
     }
 }

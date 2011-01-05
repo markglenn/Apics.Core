@@ -60,6 +60,9 @@ namespace Apics.Data.AptifyAdapter
             Log.DebugFormat( "Creating aptify entity for {0}", entityMetadata.Name );
 
             var application = this.kernel.Get<AptifyApplication>( );
+
+            application.UserCredentials.DefaultTransactionID = String.Empty;
+            
             EntityInfo info = application.get_Entity( entityMetadata.Id );
             AptifyGenericEntityBase entity;
 
@@ -99,8 +102,6 @@ namespace Apics.Data.AptifyAdapter
         public AptifyGenericEntityBase GetEntity( object entity, IAptifyTransaction transaction = null )
         {
             var aptifyEntity = this.Tables.GetEntityMetadata( entity );
-            
-            EntityInfo info = this.kernel.Get<AptifyApplication>( ).get_Entity( aptifyEntity.Id );
 
             // Reflection magic to get the ID.  Let's hope nobody checks this.
             var prop = (
@@ -115,6 +116,13 @@ namespace Apics.Data.AptifyAdapter
                 throw new InvalidOperationException( "Entity's ID is not a valid type.  Please use an int or long" );
 
             long id = Convert.ToInt64( prop.GetValue( entity, null ) );
+
+            var application = this.kernel.Get<AptifyApplication>( );
+            
+            // TODO: Fix this hack
+            application.UserCredentials.DefaultTransactionID = transaction != null ? transaction.TransactionName : String.Empty;
+
+            EntityInfo info = application.get_Entity( aptifyEntity.Id );
 
             return info.GetEntityObject( id );
         }
