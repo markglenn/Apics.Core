@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Financial\CurrencyType.cs" />
     <Compile Include="Financial\PaymentInformation.cs" />
     <Compile Include="Financial\PaymentType.cs" />
     <Compile Include="Fulfillment\DistributionType.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Fulfillment\OrderType.cs" />
     <Compile Include="Fulfillment\Product.cs" />
     <Compile Include="Fulfillment\ProductCategory.cs" />
+    <Compile Include="Fulfillment\ProductPrice.cs" />
     <Compile Include="Fulfillment\ProductType.cs" />
     <Compile Include="Fulfillment\Shipment.cs" />
     <Compile Include="Fulfillment\ShipType.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="Location\Country.cs" />
     <Compile Include="User\Company.cs" />
     <Compile Include="User\Employee.cs" />
+    <Compile Include="User\MemberType.cs" />
     <Compile Include="User\Organization.cs" />
     <Compile Include="User\PersonAddress.cs" />
     <Compile Include="User\Person.cs" />
