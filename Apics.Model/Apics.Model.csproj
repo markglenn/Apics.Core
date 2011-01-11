@@ -75,6 +75,7 @@
     <Compile Include="Location\Country.cs" />
     <Compile Include="User\Company.cs" />
     <Compile Include="User\Employee.cs" />
+    <Compile Include="User\MemberType.cs" />
     <Compile Include="User\Organization.cs" />
     <Compile Include="User\PersonAddress.cs" />
     <Compile Include="User\Person.cs" />
