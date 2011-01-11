@@ -66,9 +66,6 @@ namespace Apics.Model.User
         [Property]
         public virtual DateTime DateUpdated { get; set; }
 
-        [BelongsTo("MemberTypeID", Lazy = FetchWhen.OnInvoke)]
-        public virtual MemberType MemberType { get; set; }
-
         public virtual Address PreferredAddressAddress
         {
             get
