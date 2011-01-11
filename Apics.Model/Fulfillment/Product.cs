@@ -50,7 +50,7 @@ namespace Apics.Model.Fulfillment
         public virtual bool IsSold { get; set; }
 
         [HasMany( Lazy = true )]
-        public IList<ProductPrice> ProductPrices { get; set; }
+        public virtual IList<ProductPrice> ProductPrices { get; set; }
 
     }
 }
