@@ -16,7 +16,6 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
         [Test]
         public void UpdatingShipmentCostsUpdatesOrderCosts( )
         {
-
             var orders = GetRepository<Order>( );
 
             var order = orders
@@ -67,7 +66,6 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
             order.Employee = GetRepository<Employee>( ).GetProxy( 1 );
 
             orders.Insert( order );
-            this.Transaction.Commit( );
         }
 
         [Test]

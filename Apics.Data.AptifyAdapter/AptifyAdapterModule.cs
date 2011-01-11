@@ -12,6 +12,8 @@ using Apics.Data.Dialect;
 using log4net;
 using Ninject;
 using Ninject.Modules;
+using Aptify.Framework.Application;
+using System.Security.Permissions;
 
 namespace Apics.Data.AptifyAdapter
 {
@@ -38,6 +40,12 @@ namespace Apics.Data.AptifyAdapter
             Bind<IDialect>( ).To<AptifyDialect>( ).InSingletonScope( );
             Bind<AptifyServer>( ).ToSelf( ).InSingletonScope( );
 
+            Bind<AptifyApplication>( ).ToMethod( c =>
+            {
+                var parameter = c.Kernel.Get<AptifyConnectionStringBuilder>( ).Credentials;
+                return new AptifyApplication( parameter, false );
+            } ).InRequestScope( );
+
             Bind<AptifyConnectionStringBuilder>( ).ToSelf( ).InSingletonScope( )
                 .WithConstructorArgument( "connectionString", this.connectionString );
 
@@ -54,10 +62,15 @@ namespace Apics.Data.AptifyAdapter
             Log.Info( "Loaded AptifyAdapterModule" );
 
             // Try loading the configuration for which Aptify modules to load
+            LoadModuleConfiguration( );
+        }
+
+        private static void LoadModuleConfiguration( )
+        {
             var configuration = ( AptifyModuleSettingConfiguration )ConfigurationManager.GetSection( "aptify.modules" );
 
             // Did not find the configuration
-            if( configuration == null )
+            if ( configuration == null )
                 return;
 
             // Load all the forced load assemblies

@@ -20,7 +20,7 @@ namespace Apics.Data.AptifyAdapter.ADO
         public AptifyConnection( AptifyConnectionStringBuilder connectionString )
         {
             this.connectionString = connectionString;
-            this.dataAction = new DataAction( this.connectionString.Credentials );
+            this.dataAction = new DataAction( this.connectionString.Credentials, String.Empty, false );
         }
 
         #region [ DbConnection Overrides ]

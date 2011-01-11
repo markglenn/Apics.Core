@@ -19,25 +19,38 @@ namespace Apics.Model.Fulfillment
         [Property]
         public virtual string Description { get; set; }
 
-        [BelongsTo( "ParentID" )]
+        /// <summary>
+        /// Parent product
+        /// </summary>
+        [BelongsTo( "ParentID", Lazy = FetchWhen.OnInvoke )]
         public virtual Product Parent { get; set; }
 
+        /// <summary>
+        /// Child products
+        /// </summary>
         [HasMany( Lazy = true )]
         public virtual IList<Product> ChildProducts { get; set; }
 
-        [BelongsTo( "CategoryID", NotNull = true )]
+        [BelongsTo( "CategoryID", NotNull = true, Lazy = FetchWhen.OnInvoke )]
         public virtual ProductCategory Category { get; set; }
 
-        [BelongsTo( "DistributionTypeID" )]
+        [BelongsTo( "DistributionTypeID", Lazy = FetchWhen.OnInvoke )]
         public virtual DistributionType DistributionType { get; set; }
 
         [Property( Length = 50 )]
         public virtual string Code { get; set; }
 
-        [BelongsTo( "ProductTypeID" )]
+        [BelongsTo( "ProductTypeID", Lazy = FetchWhen.OnInvoke )]
         public virtual ProductType ProductType { get; set; }
 
         [Property]
         public virtual DateTime DateAvailable { get; set; }
+
+        [Property]
+        public virtual bool IsSold { get; set; }
+
+        [HasMany( Lazy = true )]
+        public virtual IList<ProductPrice> ProductPrices { get; set; }
+
     }
 }

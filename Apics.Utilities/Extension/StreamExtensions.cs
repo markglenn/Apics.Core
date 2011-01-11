@@ -36,7 +36,7 @@ namespace Apics.Utilities.Extension
         }
 
         /// <summary>
-        /// Copys a stream to another stream
+        /// Copies a stream to another stream
         /// </summary>
         /// <param name="inputStream">Seekable stream to duplicate</param>
         /// <param name="outputStream">Output stream</param>
@@ -59,22 +59,12 @@ namespace Apics.Utilities.Extension
             inputStream.Seek( 0, SeekOrigin.Begin );
         }
 
-        public static GZipStream Compress( this Stream stream )
-        {
-            return stream.Compress( false );
-        }
-
-        public static GZipStream Compress( this Stream stream, bool leaveOpen )
+        public static GZipStream Compress( this Stream stream, bool leaveOpen = false )
         {
             return new GZipStream( stream, CompressionMode.Compress, leaveOpen );
         }
 
-        public static GZipStream Decompress( this Stream stream )
-        {
-            return stream.Decompress( false );
-        }
-
-        public static GZipStream Decompress( this Stream stream, bool leaveOpen )
+        public static GZipStream Decompress( this Stream stream, bool leaveOpen = false )
         {
             return new GZipStream( stream, CompressionMode.Decompress, leaveOpen );
         }

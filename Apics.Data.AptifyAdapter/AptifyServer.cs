@@ -8,6 +8,7 @@ using Apics.Data.AptifyAdapter.Store;
 using Aptify.Framework.Application;
 using Aptify.Framework.BusinessLogic.GenericEntity;
 using log4net;
+using Ninject;
 
 namespace Apics.Data.AptifyAdapter
 {
@@ -18,8 +19,8 @@ namespace Apics.Data.AptifyAdapter
     {
         private static readonly ILog Log = LogManager.GetLogger( typeof( AptifyServer ) );
 
-        private readonly AptifyApplication application;
         private readonly AptifyConnectionStringBuilder connection;
+        private readonly IKernel kernel;
 
         #region [ Public Properties ]
 
@@ -42,10 +43,9 @@ namespace Apics.Data.AptifyAdapter
         /// Creates a connection to the aptify application server
         /// </summary>
         /// <param name="connection">Connection string</param>
-        public AptifyServer( AptifyConnectionStringBuilder connection )
+        public AptifyServer( IKernel kernel, AptifyConnectionStringBuilder connection )
         {
-            this.application = new AptifyApplication( connection.Credentials );
-
+            this.kernel = kernel;
             this.connection = connection;
         }
 
@@ -59,8 +59,11 @@ namespace Apics.Data.AptifyAdapter
         {
             Log.DebugFormat( "Creating aptify entity for {0}", entityMetadata.Name );
 
-            this.application.UserCredentials.DefaultTransactionID = String.Empty;
-            EntityInfo info = this.application.get_Entity( entityMetadata.Id );
+            var application = this.kernel.Get<AptifyApplication>( );
+
+            application.UserCredentials.DefaultTransactionID = String.Empty;
+            
+            EntityInfo info = application.get_Entity( entityMetadata.Id );
             AptifyGenericEntityBase entity;
 
             // Aptify requires a '-1' if the entity is to be created
@@ -86,17 +89,19 @@ namespace Apics.Data.AptifyAdapter
             return entity;
         }
 
-        internal AptifyGenericEntityBase GetEntity( string name, int id )
+        internal AptifyGenericEntityBase GetEntity( string name, int id, IAptifyTransaction transaction = null )
         {
-            return this.application.GetEntityObject( name, ( long )id );
+            var application = this.kernel.Get<AptifyApplication>( );
+
+            application.UserCredentials.DefaultTransactionID = transaction == null ? String.Empty :
+                transaction.TransactionName;
+
+            return application.GetEntityObject( name, ( long )id );
         }
 
-        public AptifyGenericEntityBase GetEntity( object entity )
+        public AptifyGenericEntityBase GetEntity( object entity, IAptifyTransaction transaction = null )
         {
             var aptifyEntity = this.Tables.GetEntityMetadata( entity );
-            
-            this.application.UserCredentials.DefaultTransactionID = String.Empty;
-            EntityInfo info = this.application.get_Entity( aptifyEntity.Id );
 
             // Reflection magic to get the ID.  Let's hope nobody checks this.
             var prop = (
@@ -111,6 +116,13 @@ namespace Apics.Data.AptifyAdapter
                 throw new InvalidOperationException( "Entity's ID is not a valid type.  Please use an int or long" );
 
             long id = Convert.ToInt64( prop.GetValue( entity, null ) );
+
+            var application = this.kernel.Get<AptifyApplication>( );
+            
+            // TODO: Fix this hack
+            application.UserCredentials.DefaultTransactionID = transaction != null ? transaction.TransactionName : String.Empty;
+
+            EntityInfo info = application.get_Entity( aptifyEntity.Id );
 
             return info.GetEntityObject( id );
         }

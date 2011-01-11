@@ -12,6 +12,7 @@ using NHibernate;
 using NHibernate.Engine;
 using NHibernate.Proxy;
 using NHibernate.Type;
+using System.Reflection;
 
 namespace Apics.Data.AptifyAdapter
 {
@@ -274,16 +275,18 @@ namespace Apics.Data.AptifyAdapter
 
             if( column.IsForeignKeyColumn && state != null )
             {
-                if ( doCascade )
+                if (doCascade)
                 {
-                    var cascadeStore = new EntityStore( this.store.Session, state );
-                    var cascadeEntity = new AptifyEntity( this.server, cascadeStore );
+                    var cascadeStore = new EntityStore(this.store.Session, state);
+                    var cascadeEntity = new AptifyEntity(this.server, cascadeStore);
 
-                    state = cascadeEntity.SaveOrUpdate( );
+                    state = cascadeEntity.SaveOrUpdate();
                 }
                 else
+                {
+                    //var id = state.GetType().GetProperty("Id").GetValue(state, new object[] { });
                     state = this.store.Session.GetIdentifier( state );
-                
+                }
             }
 
             genericEntityBase.SetValue( column.Name, state );

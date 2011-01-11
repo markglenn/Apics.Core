@@ -65,5 +65,29 @@ namespace Apics.Model.User
 
         [Property]
         public virtual DateTime DateUpdated { get; set; }
+
+        [BelongsTo("MemberTypeID", Lazy = FetchWhen.OnInvoke)]
+        public virtual MemberType MemberType { get; set; }
+
+        public virtual Address PreferredAddressAddress
+        {
+            get
+            {
+                switch (PreferredAddress)
+                {
+                    case "Home Address":
+                        return HomeAddress;
+
+                    case "Business Address":
+                        return Address;
+
+                    case "Billing Address":
+                        return BillingAddress;
+
+                    default:
+                        return HomeAddress ?? BillingAddress ?? Address;
+                }
+            }
+        }
     }
 }

@@ -60,8 +60,8 @@ namespace Apics.Data.AptifyAdapter.ADO
 
         public override UpdateRowSource UpdatedRowSource
         {
-            get { throw new NotImplementedException( ); }
-            set { throw new NotImplementedException( ); }
+            get { throw new NotSupportedException( ); }
+            set { throw new NotSupportedException( ); }
         }
 
         public override void Cancel( )

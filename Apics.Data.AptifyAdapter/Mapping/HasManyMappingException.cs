@@ -5,6 +5,7 @@ using Castle.ActiveRecord.Framework.Internal;
 
 namespace Apics.Data.AptifyAdapter.Mapping
 {
+    [Serializable]
     public class HasManyMappingException : MappingException
     {
         #region [ Public Properties ]
