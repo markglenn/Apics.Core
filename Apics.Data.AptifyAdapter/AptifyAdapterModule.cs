@@ -75,10 +75,7 @@ namespace Apics.Data.AptifyAdapter
 
             // Load all the forced load assemblies
             foreach ( AptifyModule module in configuration.Modules )
-            {
-                if ( File.Exists( Path.GetFullPath( module.Type ) ) )
-                    Assembly.LoadFile( Path.GetFullPath( module.Type ) );
-            }
+                AppDomain.CurrentDomain.Load( module.Type ); 
         }
 
         #endregion [ NinjectModule Overrides ]
@@ -101,7 +98,7 @@ namespace Apics.Data.AptifyAdapter
                     connection.Open( );
 
                     string filename = GetFilenameFromReference( args.Name );
-                    byte[ ] rawFile = LoadFileFromDatabase( connection, filename );
+                    byte[ ] rawFile = File.ReadAllBytes( Path.Combine( @"C:\Program Files\Aptify 5.0\", filename ) );
 
                     if( rawFile != null )
                     {
