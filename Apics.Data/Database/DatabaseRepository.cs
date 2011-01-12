@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
+using Castle.ActiveRecord.Framework;
 
 namespace Apics.Data.Database
 {
@@ -136,19 +137,6 @@ namespace Apics.Data.Database
         }
 
         #endregion [ IRepository Members ]
-    }
-
-    public static class QueryableExtensions
-    {
-        public static IQueryable<T> ExpandChildren<T>( this IQueryable<T> queryable, string path )
-        {
-            var q = queryable as NHibernate.Linq.Query<T>;
-
-            if ( q != null )
-                return q.Expand( path );
-
-            return queryable;
-        }
     }
 
 }

@@ -119,7 +119,7 @@ namespace Apics.Model.Fulfillment
         [BelongsTo( "PaymentInformationID", Cascade = CascadeEnum.All, Lazy = FetchWhen.OnInvoke )]
         public virtual PaymentInformation PaymentInformation { get; set; }
 
-        [HasMany( Lazy = true, Cascade = ManyRelationCascadeEnum.None )]
+        [HasMany( Lazy = true, Cascade = ManyRelationCascadeEnum.All )]
         public virtual IList<Shipment> Shipments { get; set; }
 
         [BelongsTo( "EmployeeID", NotNull = true, Lazy = FetchWhen.OnInvoke )]

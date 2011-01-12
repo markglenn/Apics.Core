@@ -26,6 +26,9 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests
                 @"Data Source=192.168.9.204\APTIFYDEV;Initial Catalog=Aptify;User ID=sa;Password=sa@SQL082K8;",
                 typeof( Apics.Model.Fulfillment.Order ).Assembly.FullName,
                 typeof( Apics.Data.AptifyAdapter.AptifyAdapterModule ).AssemblyQualifiedName );
+
+            AppDomain.CurrentDomain.Load( "AptifyOrdersEntity.dll" );
+            AppDomain.CurrentDomain.Load( "AptifySecurityKey.dll" );
         }
 
         [TestFixtureTearDown]
