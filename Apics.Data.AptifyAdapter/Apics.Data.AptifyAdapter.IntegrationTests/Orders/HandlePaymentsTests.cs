@@ -39,33 +39,43 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
         [Test]
         public void TestCreditCardOrderCreation( )
         {
-            var orders = GetRepository<Order>( );
-
-            var order = new Order
+            try
             {
-                BillToPerson = GetRepository<Person>( ).GetProxy( 1744343 ),
-                ShipToPerson = GetRepository<Person>( ).GetProxy( 1744343 ),
-            };
 
-            var item = new OrderItem
+
+                var orders = GetRepository<Order>( );
+
+                var order = new Order
+                {
+                    BillToPerson = GetRepository<Person>( ).GetProxy( 1744343 ),
+                    ShipToPerson = GetRepository<Person>( ).GetProxy( 1744343 ),
+                };
+
+                var item = new OrderItem
+                {
+                    Product = GetRepository<Product>( ).GetProxy( 5795 ),
+                    Quantity = 1,
+                    Price = 1649
+                };
+
+                order.Items.Add( item );
+
+                order.PaymentInformation.PaymentType = GetRepository<PaymentType>( ).GetProxy( 1 );
+                order.PaymentInformation.CCAccountNumber = "4111111111111111";
+                order.PaymentInformation.CCExpireDate = DateTime.Today.AddYears( 1 );
+
+                order.OrderState.Status = GetRepository<OrderStatus>( ).GetProxy( 1 );
+                order.OrderState.Type = GetRepository<OrderType>( ).GetProxy( 1 );
+                order.ShipType = GetRepository<ShipType>( ).GetProxy( 1 );
+                order.Employee = GetRepository<Employee>( ).GetProxy( 1 );
+
+                orders.Insert( order );
+            }
+            catch ( Exception )
             {
-                Product = GetRepository<Product>( ).GetProxy( 5795 ),
-                Quantity = 1,
-                Price = 1649
-            };
 
-            order.Items.Add( item );
-
-            order.PaymentInformation.PaymentType = GetRepository<PaymentType>( ).GetProxy( 1 );
-            order.PaymentInformation.CCAccountNumber = "4111111111111111";
-            order.PaymentInformation.CCExpireDate = DateTime.Today.AddYears( 1 );
-
-            order.OrderState.Status = GetRepository<OrderStatus>( ).GetProxy( 1 );
-            order.OrderState.Type = GetRepository<OrderType>( ).GetProxy( 1 );
-            order.ShipType = GetRepository<ShipType>( ).GetProxy( 1 );
-            order.Employee = GetRepository<Employee>( ).GetProxy( 1 );
-
-            orders.Insert( order );
+                throw;
+            }
         }
 
         [Test]

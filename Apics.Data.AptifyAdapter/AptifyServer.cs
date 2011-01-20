@@ -183,14 +183,26 @@ namespace Apics.Data.AptifyAdapter
             if( transaction == null )
             {
                 // Save without transaction
-                if( !genericEntity.Save( false, ref errorMessage ) )
+                if ( !genericEntity.Save( false, ref errorMessage ) )
+                {
+                    // It's possible the error message is not returned
+                    if ( String.IsNullOrEmpty( errorMessage ) )
+                        errorMessage = genericEntity.LastError;
+
                     throw new DataException( errorMessage );
+                }
             }
             else
             {
                 // Save using the transaction
-                if( !genericEntity.Save( false, ref errorMessage, transaction.TransactionName ) )
+                if ( !genericEntity.Save( false, ref errorMessage, transaction.TransactionName ) )
+                {
+                    // It's possible the error message is not returned
+                    if ( String.IsNullOrEmpty( errorMessage ) )
+                        errorMessage = genericEntity.LastError;
+
                     throw new DataException( errorMessage );
+                }
             }
 
             return ( int )genericEntity.RecordID;
