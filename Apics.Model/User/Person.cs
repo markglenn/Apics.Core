@@ -3,9 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using Castle.ActiveRecord;
 using Apics.Model.Location;
+using System.ComponentModel;
+using Apics.Utilities.Extension;
 
 namespace Apics.Model.User
 {
+    public enum PreferredAddress
+    {
+        [Description( "Home Address" )]
+        Home,
+        [Description( "Business Address" )]
+        Business,
+        [Description( "Billing Address" )]
+        Billing
+    }
+
+    public class DescribedEnumStringType<T> : NHibernate.Type.EnumStringType<T> where T : struct, IConvertible
+    {
+        public override object GetValue( object code )
+        {
+            if ( code == null )
+                return String.Empty;
+
+            var type = typeof( T );
+            var name = Enum.GetName( type, code );
+            var enumeration = ( Enum )Enum.Parse( type, name );
+
+            return enumeration.GetDescription( );
+        }
+
+    } 
+
     [ActiveRecord( Lazy = true )]
     public class Person
     {
@@ -39,8 +67,9 @@ namespace Apics.Model.User
         [BelongsTo("MemberTypeID", Lazy = FetchWhen.OnInvoke)]
         public virtual MemberType MemberType { get; set; }
 
-        [Property]
-        public virtual string PreferredAddress { get; set; }
+        [Property( "PreferredAddress", NotNull = true,
+            ColumnType = @"Apics.Model.User.DescribedEnumStringType`1[Apics.Model.User.PreferredAddress], Apics.Model" )]
+        public virtual PreferredAddress PreferredAddress { get; set; }
 
         [Property]
         public virtual string PreferredShippingAddress { get; set; }
@@ -66,25 +95,5 @@ namespace Apics.Model.User
         [Property]
         public virtual DateTime DateUpdated { get; set; }
 
-        public virtual Address PreferredAddressAddress
-        {
-            get
-            {
-                switch (PreferredAddress)
-                {
-                    case "Home Address":
-                        return HomeAddress;
-
-                    case "Business Address":
-                        return Address;
-
-                    case "Billing Address":
-                        return BillingAddress;
-
-                    default:
-                        return HomeAddress ?? BillingAddress ?? Address;
-                }
-            }
-        }
     }
 }

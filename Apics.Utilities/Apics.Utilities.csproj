@@ -77,6 +77,7 @@
     <Compile Include="Extension\Dynamic.cs" />
     <Compile Include="Extension\DateTimeExtensions.cs" />
     <Compile Include="Extension\EnumerableExtensions.cs" />
+    <Compile Include="Extension\EnumExtensions.cs" />
     <Compile Include="Extension\StreamExtensions.cs" />
     <Compile Include="Extension\ThrowHelper.cs" />
     <Compile Include="Extension\TimeSpanExtensions.cs" />
