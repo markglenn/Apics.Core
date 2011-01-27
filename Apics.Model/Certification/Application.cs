@@ -77,6 +77,12 @@ namespace Apics.Model.Certification
         [Property( Length = 4000 )]
         public virtual string Notes { get; set; }
 
+        [Property]
+        public virtual DateTime DateCreated { get; set; }
+
+        [Property]
+        public virtual DateTime DateUpdated { get; set; }
+
     }
 
 }
