@@ -107,7 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Certification\Application.cs" />
+    <Compile Include="Certification\ApplicationSubmission.cs" />
     <Compile Include="Certification\Exam.cs" />
+    <Compile Include="Certification\PersonSubmission.cs" />
     <Compile Include="Financial\CurrencyType.cs" />
     <Compile Include="Financial\PaymentInformation.cs" />
     <Compile Include="Financial\PaymentType.cs" />

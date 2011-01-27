@@ -5,6 +5,7 @@ using Castle.ActiveRecord;
 using Apics.Model.Location;
 using System.ComponentModel;
 using Apics.Utilities.Extension;
+using Apics.Model.Certification;
 
 namespace Apics.Model.User
 {
@@ -115,6 +116,9 @@ namespace Apics.Model.User
 
         [Property]
         public virtual DateTime DateUpdated { get; set; }
+
+        [HasMany]
+        public virtual IList<PersonSubmission> Submissions { get; set; }
 
     }
 
