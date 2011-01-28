@@ -9,6 +9,7 @@ namespace Apics.Data.Database
 {
 	public class DatabaseDataStore : DataStoreBase
 	{
+        
 		public DatabaseDataStore( IDialect dialect, string connectionString )
 			: base( null, dialect, typeof( DriverConnectionProvider ), connectionString )
 		{
@@ -18,7 +19,7 @@ namespace Apics.Data.Database
 
         public override IDbConnection CreateConnection( )
 	    {
-            throw new NotSupportedException( );
+            return new SqlConnection( this.ConnectionString );
         }
 
         #endregion [ Overrides of DataStoreBase ]

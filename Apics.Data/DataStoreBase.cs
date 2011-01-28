@@ -19,6 +19,7 @@ namespace Apics.Data
 		#region [ Private Members ]
 
 		protected readonly IDictionary<string, string> Properties;
+        protected readonly string ConnectionString;
 
 		#endregion [ Private Members ]
 
@@ -33,6 +34,8 @@ namespace Apics.Data
 
 			if ( String.IsNullOrEmpty( connectionString ) )
 				throw new ArgumentException( "connectionString" );
+
+            this.ConnectionString = connectionString;
 
 			// Set the defaults of the properties
 			this.Properties = new Dictionary<string, string> {
