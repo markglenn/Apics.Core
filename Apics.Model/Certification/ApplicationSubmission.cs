@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
 using System.Diagnostics;
+using Apics.Model.User;
 
 namespace Apics.Model.Certification
 {
@@ -28,7 +29,6 @@ namespace Apics.Model.Certification
 
         [Property]
         public virtual DateTime? LastDateAccepted { get; set; }
-
     }
 
 }

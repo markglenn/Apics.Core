@@ -19,7 +19,7 @@ namespace Apics.Model.User
         Billing
     }
 
-    public class DescribedEnumStringType<T> : NHibernate.Type.EnumStringType<T> where T : struct, IConvertible
+    public class DescribedEnumStringType<T> : NHibernate.Type.EnumStringType<T> where T : struct
     {
         private readonly IEnumerable<Enum> values;
         private readonly IDictionary<Enum, string> descriptions;
@@ -117,7 +117,7 @@ namespace Apics.Model.User
         [Property]
         public virtual DateTime DateUpdated { get; set; }
 
-        [HasMany]
+        [HasMany( Lazy = true )]
         public virtual IList<PersonSubmission> Submissions { get; set; }
 
     }
@@ -143,6 +143,15 @@ namespace Apics.Model.User
                         p.HomeAddress != null ? p.HomeAddress.Id :
                         p.Address != null ? p.Address.Id : -1 )
                 } );
+        }
+
+        public static IQueryable<Person> FromCountries( this IEnumerable<Person> people, IEnumerable<Address> addresses, 
+            IEnumerable<Country> countries )
+        {
+            return from p in people.WithPreferredAddresses( )
+                   join a1 in addresses on p.AddressId equals a1.Id
+                   where countries.Contains( a1.Country )
+                   select p.Person;
         }
     }
 }

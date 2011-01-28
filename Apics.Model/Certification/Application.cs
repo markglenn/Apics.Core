@@ -87,4 +87,13 @@ namespace Apics.Model.Certification
         public virtual IList<ApplicationSubmission> Submissions { get; set; }
     }
 
+    public static class ApplicationQueries
+    {
+        public static IQueryable<Application> Approved( this IEnumerable<Application> applications )
+        {
+            return applications.AsQueryable( ).Where( a => a.Status == ApplicationStatus.Approved );
+        }
+
+    }
+
 }
