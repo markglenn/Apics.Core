@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Castle.ActiveRecord;
+using Apics.Model.Location;
 
 namespace Apics.Model.User
 {
@@ -20,5 +21,12 @@ namespace Apics.Model.User
 
         [BelongsTo( "RootCompanyID" )]
         public virtual Company RootCompany { get; set; }
+
+        [BelongsTo( "AddressID", Lazy = FetchWhen.OnInvoke )]
+        public virtual Address Address { get; set; }
+
+        [BelongsTo( "BillingAddressID", Lazy = FetchWhen.OnInvoke )]
+        public virtual Address BillingAddress { get; set; }
+
     }
 }

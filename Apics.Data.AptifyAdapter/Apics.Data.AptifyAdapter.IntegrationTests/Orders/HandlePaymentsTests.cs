@@ -7,6 +7,7 @@ using Apics.Model.Fulfillment;
 using Apics.Model.User;
 using Apics.Model.Financial;
 using Ninject;
+using Aptify.Framework.BusinessLogic.GenericEntity;
 
 namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
 {
@@ -95,7 +96,6 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
 
             Assert.IsNotEmpty( ( string )entity.GetField( "CCAccountNumber" ).Value );
         }
-
 
         [Test]
         public void TestPurchaseOrderCreation( )
