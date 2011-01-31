@@ -16,5 +16,10 @@ namespace Apics.Utilities.Extension
                .Select( a => ( ( DescriptionAttribute )a ).Description )
                .FirstOrDefault( );
         }
+
+        public static T AsEnum<T>( this string value )
+        {
+            return ( T )Enum.Parse( typeof( T ), value, true );
+        }
     }
 }
