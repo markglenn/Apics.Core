@@ -6,6 +6,7 @@ using Apics.Model.Location;
 using System.ComponentModel;
 using Apics.Utilities.Extension;
 using Apics.Model.Certification;
+using Apics.Model.Fulfillment;
 
 namespace Apics.Model.User
 {
@@ -92,6 +93,12 @@ namespace Apics.Model.User
         [Property( "PreferredAddress", NotNull = true,
             ColumnType = @"Apics.Model.User.DescribedEnumStringType`1[Apics.Model.User.PreferredAddress], Apics.Model" )]
         public virtual PreferredAddress PreferredAddress { get; set; }
+
+        [HasMany( ColumnKey = "BillToID", Lazy = true )]
+        public virtual IList<Order> BillToOrders { get; set; }
+
+        [HasMany( ColumnKey = "ShipToID", Lazy = true )]
+        public virtual IList<Order> ShipToOrders { get; set; }
 
         [Property]
         public virtual string PreferredShippingAddress { get; set; }
