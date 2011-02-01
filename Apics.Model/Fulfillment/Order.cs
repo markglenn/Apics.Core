@@ -140,5 +140,18 @@ namespace Apics.Model.Fulfillment
                             i.Product.Code != String.Empty ) )
                 .Where( o => !o.Items.Any( i => i.Product.DateAvailable > DateTime.Now ) );
         }
+
+        public static IQueryable<Order> Shipped( this IEnumerable<Order> orders )
+        {
+            return orders.AsQueryable( )
+                .Where( o => o.OrderState.Status.Name == "Shipped" );
+        }
+
+        public static IQueryable<Order> WithProduct( this IEnumerable<Order> orders, string productCode )
+        {
+            return orders.AsQueryable( ).Where( o => 
+                o.Items.Any( i =>
+                    i.Product.Code == productCode ) );
+        }
     }
 }
