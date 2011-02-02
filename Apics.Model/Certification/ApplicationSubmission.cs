@@ -29,6 +29,32 @@ namespace Apics.Model.Certification
 
         [Property]
         public virtual DateTime? LastDateAccepted { get; set; }
+
+        public ApplicationSubmission ()
+	    {
+            this.SubmissionDateTime = DateTime.Now;
+        }
+
+        public static ApplicationSubmission Accepted( Application application )
+        {
+            return new ApplicationSubmission
+            {
+                Application = application,
+                IsAccepted = true,
+                LastDateAccepted = DateTime.Now,
+            };
+        }
+
+        public static ApplicationSubmission NotAccepted( Application application, string message )
+        {
+            return new ApplicationSubmission
+            {
+                Application = application,
+                IsAccepted = false,
+                Message = message,
+                LastDateAccepted = null
+            };
+        }
     }
 
 }
