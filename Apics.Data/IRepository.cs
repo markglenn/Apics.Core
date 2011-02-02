@@ -47,6 +47,12 @@ namespace Apics.Data
         void Update( T entity );
 
         /// <summary>
+        /// Inserts or updates an entity into the repository
+        /// </summary>
+        /// <param name="entity">Entity to save or update</param>
+        void InsertOrUpdate( T entity );
+
+        /// <summary>
         /// Deletes an entity from the repository
         /// </summary>
         /// <param name="entity">Entity to delete from the repository</param>

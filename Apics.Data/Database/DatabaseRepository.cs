@@ -35,6 +35,14 @@ namespace Apics.Data.Database
 			ActiveRecordMediator<T>.Update( entity );
 		}
 
+        public void InsertOrUpdate( T entity )
+        {
+            if ( entity == null )
+                throw new ArgumentNullException( "entity" );
+
+            ActiveRecordMediator<T>.Save( entity );
+        }
+
 		public void Delete( T entity )
 		{
 			if ( entity == null )
@@ -126,10 +134,6 @@ namespace Apics.Data.Database
 	    {
 	        return ActiveRecordMediator<T>.FindByPrimaryKey( id );
 	    }
-
-	    #endregion [ IRepository Members ]
-
-        #region [ IRepository Members ]
 
         public object GetById( object id )
         {

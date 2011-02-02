@@ -56,6 +56,12 @@ namespace Apics.Data
             throw new NotSupportedException( );
         }
 
+        public void InsertOrUpdate( T entity )
+        {
+            if ( !this.storage.Contains( entity ) )
+                this.storage.Add( entity );
+        }
+
         #endregion
 
         #region IRepository Members
@@ -125,7 +131,6 @@ namespace Apics.Data
         #endregion
 
         #region IRepository<T> Members
-
 
 
         #endregion
