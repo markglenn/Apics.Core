@@ -66,10 +66,10 @@ namespace Apics.Data.AptifyAdapter
         /// <param name="store">Entity storage</param>
         private AptifyEntity( AptifyEntity parent, AptifyServer server, EntityStore store )
         {
-            if( server == null )
+            if ( server == null )
                 throw new ArgumentNullException( "server" );
 
-            if( store == null )
+            if ( store == null )
                 throw new ArgumentNullException( "store" );
 
             this.parent = parent;
@@ -83,7 +83,7 @@ namespace Apics.Data.AptifyAdapter
             this.genericEntity = LoadGenericEntity( );
 
             // Load any child items
-            if( store.Persister.HasCascades )
+            if ( store.Persister.HasCascades )
                 this.children = LoadChildEntities( ).ToArray( );
         }
 
@@ -97,7 +97,7 @@ namespace Apics.Data.AptifyAdapter
                 int id = this.store.Id;
 
                 // Clean objects don't need to do anything
-                if( this.store.Status != EntityStatus.Clean || this.Parent == null )
+                if ( this.store.Status != EntityStatus.Clean || this.Parent == null )
                 {
                     // Save the entity to the Aptify server
                     id = this.server.SaveEntity( this.genericEntity, this.store.Transaction );
@@ -108,7 +108,7 @@ namespace Apics.Data.AptifyAdapter
                     Log.InfoFormat( "Saved {0}[{1}]", this.table.Name, id );
                 }
 
-                if( this.children != null )
+                if ( this.children != null )
                 {
                     foreach ( AptifyEntity child in this.children )
                         child.SaveOrUpdate( );
@@ -121,7 +121,7 @@ namespace Apics.Data.AptifyAdapter
 
                 return id;
             }
-            catch( Exception e )
+            catch ( Exception e )
             {
                 Log.ErrorFormat( "Could not save entity {0}: {1}", this.table.Name, e );
                 throw;
@@ -138,20 +138,20 @@ namespace Apics.Data.AptifyAdapter
                 AptifyGenericEntityBase aptifyEntity = this.server.GetEntity( this.table.Entity, this.store );
                 AptifyNHibernateTransaction transaction = this.store.Transaction;
 
-                if( transaction == null )
+                if ( transaction == null )
                 {
-                    if( !aptifyEntity.Delete( ) )
+                    if ( !aptifyEntity.Delete( ) )
                         throw new DataException( aptifyEntity.LastError );
                 }
                 else
                 {
-                    if( !aptifyEntity.Delete( transaction.TransactionName ) )
+                    if ( !aptifyEntity.Delete( transaction.TransactionName ) )
                         throw new DataException( aptifyEntity.LastError );
                 }
 
                 Log.InfoFormat( "Deleted {0}[{1}]", this.table.Name, aptifyEntity.RecordID );
             }
-            catch( Exception e )
+            catch ( Exception e )
             {
                 Log.ErrorFormat( "Could not delete entity {0}: {1}", this.table.Name, e );
                 throw;
@@ -166,20 +166,20 @@ namespace Apics.Data.AptifyAdapter
         private AptifyGenericEntityBase LoadGenericEntity( )
         {
             // Clean entities don't need to be loaded
-            if( this.store.Status == EntityStatus.Clean && this.parent != null )
+            if ( this.store.Status == EntityStatus.Clean && this.parent != null )
                 return null;
 
             Log.DebugFormat( "Trying to load entity '{0}'", this.table.Entity.Name );
 
             AptifyGenericEntityBase entity;
 
-            if( this.parent != null )
+            if ( this.parent != null )
                 entity = this.server.GetEntity( this.parent, this.table.Entity, this.store );
             else
                 entity = this.server.GetEntity( this.table.Entity, this.store );
 
             // Update each dirty value
-            foreach( int dirtyIndex in this.store.DirtyIndices )
+            foreach ( int dirtyIndex in this.store.DirtyIndices )
             {
                 // Get the name of the dirty column
                 string columnName = this.store.Persister.PropertyNames[ dirtyIndex ];
@@ -190,7 +190,7 @@ namespace Apics.Data.AptifyAdapter
                 bool doCascade =
                     this.store.Persister.PropertyCascadeStyles[ dirtyIndex ].DoCascade( CascadingAction.SaveUpdate );
 
-                if( this.table.Columns.TryGetValue( columnName, out column ) )
+                if ( this.table.Columns.TryGetValue( columnName, out column ) )
                     SetColumnValue( entity, column, this.store[ dirtyIndex ], doCascade );
             }
 
@@ -209,12 +209,12 @@ namespace Apics.Data.AptifyAdapter
             // Load which properties require cascading
             CascadeStyle[ ] propertyCascades = this.store.Persister.PropertyCascadeStyles;
 
-            for( int i = 0; i < propertyCascades.Length; ++i )
+            for ( int i = 0; i < propertyCascades.Length; ++i )
             {
                 IType type = this.store.Persister.PropertyTypes[ i ];
 
                 // Make sure that this property requires cascade saves
-                if( !propertyCascades[ i ].DoCascade( CascadingAction.SaveUpdate ) )
+                if ( !propertyCascades[ i ].DoCascade( CascadingAction.SaveUpdate ) )
                     continue;
 
                 // Pull all the child items
@@ -230,17 +230,17 @@ namespace Apics.Data.AptifyAdapter
 
         private IEnumerable<AptifyEntity> LoadDirtyChild( int index, IType type, object child )
         {
-           if ( type.IsCollectionType )
+            if ( type.IsCollectionType )
                 return GetChildrenFromCollection( ( IEnumerable )child );
 
             // This child is not dirty
             if ( !this.store.DirtyIndices.Contains( index ) )
-               return new AptifyEntity[] { };
-            
+                return new AptifyEntity[ ] { };
+
             /// Find the persister
             var childStore = this.store.CreateChild( child );
-            
-            return new[] { new AptifyEntity( this, this.server, childStore ) };
+
+            return new[ ] { new AptifyEntity( this, this.server, childStore ) };
         }
 
         /// <summary>
@@ -267,20 +267,20 @@ namespace Apics.Data.AptifyAdapter
         private void SetColumnValue( AptifyGenericEntityBase genericEntityBase, AptifyColumnMetadata column,
             object state, bool doCascade )
         {
-            if( genericEntityBase == null )
+            if ( genericEntityBase == null )
                 throw new ArgumentNullException( "genericEntityBase" );
 
-            if( column == null )
+            if ( column == null )
                 throw new ArgumentNullException( "column" );
 
-            if( column.IsForeignKeyColumn && state != null )
+            if ( column.IsForeignKeyColumn && state != null || state is INHibernateProxy )
             {
-                if (doCascade)
+                if ( doCascade )
                 {
-                    var cascadeStore = new EntityStore(this.store.Session, state);
-                    var cascadeEntity = new AptifyEntity(this.server, cascadeStore);
+                    var cascadeStore = new EntityStore( this.store.Session, state );
+                    var cascadeEntity = new AptifyEntity( this.server, cascadeStore );
 
-                    state = cascadeEntity.SaveOrUpdate();
+                    state = cascadeEntity.SaveOrUpdate( );
                 }
                 else
                 {
@@ -302,7 +302,7 @@ namespace Apics.Data.AptifyAdapter
             var proxy = entity as INHibernateProxy;
 
             return ( proxy != null && proxy.HibernateLazyInitializer.IsUninitialized );
-                
+
         }
 
         #endregion [ Private Methods ]

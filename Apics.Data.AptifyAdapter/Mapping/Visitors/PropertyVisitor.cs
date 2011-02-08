@@ -25,20 +25,24 @@ namespace Apics.Data.AptifyAdapter.Mapping.Visitors
             string columnName = model.PropertyAtt.Column ?? model.Property.Name;
 
             AptifyColumnMetadata column;
-            if ( !table.Columns.TryGetValue( columnName, out column ) )
+            if ( table.Columns.TryGetValue( columnName, out column ) )
             {
+                if ( model.PropertyAtt.Column != null )
+                {
+                    table.Columns.Remove( column.Name );
+                    table.Columns[ model.Property.Name ] = column;
+                }
+
+                model.PropertyAtt.NotNull = !column.Nullable;
+            }
+            else if ( String.IsNullOrEmpty( model.PropertyAtt.Table ) )
+            {
+                // If the table property is set, this is a joined table column
+                
                 string error = String.Format( "Could not map {0} to entity {1}.  Column not defined in Aptify entity.",
                     columnName, model.Property.ReflectedType );
                 throw new InvalidConstraintException( error );
             }
-
-            if( model.PropertyAtt.Column != null )
-            {
-                table.Columns.Remove( column.Name );
-                table.Columns[ model.Property.Name ] = column;
-            }
-
-            model.PropertyAtt.NotNull = !column.Nullable;
 
             base.VisitProperty( model );
         }
