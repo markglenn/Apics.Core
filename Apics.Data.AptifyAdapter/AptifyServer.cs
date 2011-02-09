@@ -13,7 +13,7 @@ using Ninject;
 namespace Apics.Data.AptifyAdapter
 {
     /// <summary>
-    /// Connection to the Aptify server
+    /// Connection to the Aptify server ಠ_ಠ
     /// </summary>
     public class AptifyServer
     {
