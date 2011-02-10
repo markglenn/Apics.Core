@@ -148,7 +148,7 @@ namespace Apics.Data.AptifyAdapter.Store
             this.status = EntityStatus.Clean;
             this.DirtyIndices = null;
 
-            Id = id;
+            this.Id = id;
 
             // Reload the entity because it may have changed
             this.session.Refresh( this.entityObject, LockMode.None );

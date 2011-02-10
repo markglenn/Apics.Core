@@ -30,8 +30,8 @@ namespace Apics.Model.Certification
         [Property]
         public virtual DateTime? LastDateAccepted { get; set; }
 
-        public ApplicationSubmission ()
-	    {
+        public ApplicationSubmission( )
+        {
             this.SubmissionDateTime = DateTime.Now;
         }
 
@@ -51,7 +51,7 @@ namespace Apics.Model.Certification
             {
                 Application = application,
                 IsAccepted = false,
-                Message = message,
+                Message = message == null ? null : message.Substring( 0, Math.Min( message.Length, 512 ) ),
                 LastDateAccepted = null
             };
         }

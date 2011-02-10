@@ -13,6 +13,9 @@ namespace Apics.Utilities.Module
 
         public static IKernel Create( ModuleSettingConfiguration settings )
         {
+            if ( settings == null )
+                throw new ArgumentException( "Invalid dependency settings or path" );
+
             IKernel kernel = Create( );
 
             LoadModules( kernel, settings );
@@ -33,9 +36,6 @@ namespace Apics.Utilities.Module
 
         private static void LoadModules( IKernel kernel, ModuleSettingConfiguration settings )
         {
-            if( settings == null )
-                return;
-
             foreach( ModuleSetting module in settings.Modules )
             {
                 Type type = Type.GetType( module.Type, false );
