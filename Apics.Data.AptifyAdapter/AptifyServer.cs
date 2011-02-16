@@ -194,6 +194,11 @@ namespace Apics.Data.AptifyAdapter
             }
             else
             {
+                string validationMessage = String.Empty;
+
+                if ( !genericEntity.Validate( ref validationMessage ) )
+                    throw new DataException( errorMessage );
+
                 // Save using the transaction
                 if ( !genericEntity.Save( false, ref errorMessage, transaction.TransactionName ) )
                 {

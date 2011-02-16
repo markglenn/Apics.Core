@@ -20,43 +20,6 @@ namespace Apics.Model.User
         Billing
     }
 
-    public class DescribedEnumStringType<T> : NHibernate.Type.EnumStringType<T> where T : struct
-    {
-        private readonly IEnumerable<Enum> values;
-        private readonly IDictionary<Enum, string> descriptions;
-
-        public DescribedEnumStringType( )
-        {
-            this.values = Enum.GetValues( typeof( T ) ).Cast<Enum>( );
-
-            this.descriptions = this.values.ToDictionary( v => v, v => v.GetDescription( ) );
-        }
-
-        public override object GetValue( object code )
-        {
-            if ( code == null )
-                return String.Empty;
-
-            var type = typeof( T );
-            var name = Enum.GetName( type, code );
-            var enumeration = ( Enum )Enum.Parse( type, name );
-
-            return enumeration.GetDescription( );
-        }
-
-        public override object GetInstance( object code )
-        {
-            if ( code == null )
-                return default( T );
-
-            string enumString = code.ToString( ).Trim( );
-
-            return this.descriptions.Where( v => v.Value == enumString ).Select( v => v.Key )
-                .SingleOrDefault( ) ?? this.values.First( );
-        }
-
-    }
-
     [ActiveRecord( Lazy = true )]
     public class Person
     {
@@ -91,7 +54,7 @@ namespace Apics.Model.User
         public virtual MemberType MemberType { get; set; }
 
         [Property( "PreferredAddress", NotNull = true,
-            ColumnType = @"Apics.Model.User.DescribedEnumStringType`1[Apics.Model.User.PreferredAddress], Apics.Model" )]
+            ColumnType = @"Apics.Model.DescribedEnumStringType`1[Apics.Model.User.PreferredAddress], Apics.Model" )]
         public virtual PreferredAddress PreferredAddress { get; set; }
 
         [HasMany( ColumnKey = "BillToID", Lazy = true )]
@@ -127,6 +90,8 @@ namespace Apics.Model.User
         [HasMany( Lazy = true )]
         public virtual IList<PersonSubmission> Submissions { get; set; }
 
+        [HasMany( Lazy = true )]
+        public virtual IList<ExamCertification> ExamCertifications { get; set; }
     }
 
     public class PersonWithPreferredAddress

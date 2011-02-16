@@ -284,7 +284,6 @@ namespace Apics.Data.AptifyAdapter
                 }
                 else
                 {
-                    //var id = state.GetType().GetProperty("Id").GetValue(state, new object[] { });
                     state = this.store.Session.GetIdentifier( state );
                 }
             }
