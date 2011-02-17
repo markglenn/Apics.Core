@@ -110,6 +110,11 @@
     <Compile Include="Certification\ApplicationSubmission.cs" />
     <Compile Include="Certification\Exam.cs" />
     <Compile Include="Certification\ExamCertification.cs" />
+    <Compile Include="Certification\MaintenanceActivity.cs" />
+    <Compile Include="Certification\MaintenanceActivityPoint.cs" />
+    <Compile Include="Certification\MaintenanceApplication.cs" />
+    <Compile Include="Certification\MaintenanceApplicationActivity.cs" />
+    <Compile Include="Certification\MaintenanceCategory.cs" />
     <Compile Include="Certification\PersonSubmission.cs" />
     <Compile Include="DescribedEnumStringType.cs" />
     <Compile Include="Financial\CurrencyType.cs" />
