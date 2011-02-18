@@ -26,6 +26,8 @@ namespace Apics.Model.Certification
         [Property( NotNull = true, Length = 2000 )]
         public virtual string Description { get; set; }
 
+        [HasMany( Lazy = true )]
+        public virtual IList<MaintenanceActivityPoint> Points { get; set; }
     }
 
 }

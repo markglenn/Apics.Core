@@ -33,6 +33,8 @@ namespace Apics.Model.Certification
         [Property]
         public virtual DateTime? DateUpdated { get; set; }
 
+        [HasMany( Lazy = true )]
+        public virtual IList<MaintenanceApplicationActivity> Activites { get; set; }
     }
 
 }

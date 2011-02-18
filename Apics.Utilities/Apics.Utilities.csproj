@@ -117,6 +117,7 @@
     <Compile Include="Security\HmacUrlAuthorization.cs" />
     <Compile Include="Security\IUrlAuthorization.cs" />
     <Compile Include="Tuple.cs" />
+    <Compile Include="Validation\RequiredValueAttribute.cs" />
     <Compile Include="XmlConfigurator.cs" />
   </ItemGroup>
   <ItemGroup>

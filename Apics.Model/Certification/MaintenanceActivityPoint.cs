@@ -15,7 +15,7 @@ namespace Apics.Model.Certification
         public virtual int Id { get; set; }
 
         [BelongsTo( "ActivityID", NotNull = true, Lazy = FetchWhen.OnInvoke )]
-        public virtual MaintenanceActivity Activity { get; set; }
+        public virtual MaintenanceApplicationActivity Activity { get; set; }
 
         [Property]
         public virtual int Year { get; set; }

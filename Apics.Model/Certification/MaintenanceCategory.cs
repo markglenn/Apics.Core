@@ -23,7 +23,7 @@ namespace Apics.Model.Certification
         [Property]
         public virtual int? MaxCFPIMPoints { get; set; }
 
-        [HasMany( ColumnKey = "CategoryID", Lazy = false )]
+        [HasMany( ColumnKey = "CategoryID", Lazy = false, OrderBy = "SortOrder" )]
         public virtual IList<MaintenanceActivity> Activities { get; set; }
     }
 
