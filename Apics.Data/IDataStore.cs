@@ -38,5 +38,12 @@ namespace Apics.Data
         /// </summary>
         /// <returns>A new connection to the database</returns>
 	    IDbConnection CreateConnection( );
+
+        /// <summary>
+        /// Creates a transaction object that is automatically rolled back if not committed
+        /// </summary>
+        /// <param name="isolationLevel">Isolation level</param>
+        /// <returns>Transaction object</returns>
+        ITransaction CreateTransaction( IsolationLevel isolationLevel );
     }
 }

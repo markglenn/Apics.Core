@@ -13,7 +13,7 @@ namespace Apics.Model.Financial
         [PrimaryKey]
         public virtual int Id { get; set; }
 
-        [BelongsTo( "PaymentTypeID", NotNull = true, Lazy = FetchWhen.OnInvoke )]
+        [BelongsTo( "PaymentTypeID", NotNull = true, Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.None )]
         public virtual PaymentType PaymentType { get; set; }
 
         [Property( Length = 4000 )]

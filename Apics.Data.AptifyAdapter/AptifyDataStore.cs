@@ -35,7 +35,7 @@ namespace Apics.Data.AptifyAdapter
         /// <param name="provider">Type of provider</param>
         /// <param name="handler">Event handler</param>
         public AptifyDataStore( AptifyServer server, IDialect dialect, Type provider, IEventHandler handler )
-            : base( handler, dialect, provider, server.Connection.ConnectionString )
+            : base( handler, dialect, provider, server.ConnectionString )
         {
             if( server == null )
                 throw new ArgumentNullException( "server" );

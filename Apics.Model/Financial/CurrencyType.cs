@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Apics.Model.Financial
 {
-    [ActiveRecord( Lazy = true )]
+    [ActiveRecord( Lazy = true, Locking = OptimisticLocking.Dirty, DynamicUpdate = true )]
     [DebuggerDisplay( "CurrencyType: {Id}" )]
     public class CurrencyType
     {

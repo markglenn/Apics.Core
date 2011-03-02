@@ -14,6 +14,8 @@ using Ninject;
 using Ninject.Modules;
 using Aptify.Framework.Application;
 using System.Security.Permissions;
+using Apics.Data.AptifyAdapter.ADO;
+using Aptify.Framework.DataServices;
 
 namespace Apics.Data.AptifyAdapter
 {
@@ -37,6 +39,11 @@ namespace Apics.Data.AptifyAdapter
             // Make sure to load DLLs from the DB if required
             AppDomain.CurrentDomain.AssemblyResolve += OnAssembyResolve;
 
+            // Setup the connection string builder for future requests
+            Bind<AptifyConnectionStringBuilder>( ).ToSelf( ).InSingletonScope( )
+                .WithConstructorArgument( "connectionString", this.connectionString );
+            Bind<UserCredentials>( ).ToMethod( c => c.Kernel.Get<AptifyConnectionStringBuilder>( ).Credentials );
+
             Bind<IDialect>( ).To<AptifyDialect>( ).InSingletonScope( );
             Bind<AptifyServer>( ).ToSelf( ).InSingletonScope( );
 
@@ -45,9 +52,6 @@ namespace Apics.Data.AptifyAdapter
                 var parameter = c.Kernel.Get<AptifyConnectionStringBuilder>( ).Credentials;
                 return new AptifyApplication( parameter, false );
             } ).InRequestScope( );
-
-            Bind<AptifyConnectionStringBuilder>( ).ToSelf( ).InSingletonScope( )
-                .WithConstructorArgument( "connectionString", this.connectionString );
 
             // Composite event handler
             Bind<IEventHandler>( ).ToMethod( c =>
@@ -60,22 +64,6 @@ namespace Apics.Data.AptifyAdapter
                 .WithConstructorArgument( "provider", typeof( AptifyConnectionProvider ) );
 
             Log.Info( "Loaded AptifyAdapterModule" );
-
-            // Try loading the configuration for which Aptify modules to load
-            LoadModuleConfiguration( );
-        }
-
-        private static void LoadModuleConfiguration( )
-        {
-            var configuration = ( AptifyModuleSettingConfiguration )ConfigurationManager.GetSection( "aptify.modules" );
-
-            // Did not find the configuration
-            if ( configuration == null )
-                return;
-
-            // Load all the forced load assemblies
-            //foreach ( AptifyModule module in configuration.Modules )
-            //    AppDomain.CurrentDomain.Load( module.Type );
         }
 
         #endregion [ NinjectModule Overrides ]

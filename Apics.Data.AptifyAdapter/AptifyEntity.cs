@@ -54,7 +54,7 @@ namespace Apics.Data.AptifyAdapter
         /// <param name="server">Aptify server connection</param>
         /// <param name="store">Entity storage</param>
         public AptifyEntity( AptifyServer server, EntityStore store )
-            : this( null, server, store )
+            : this( ( AptifyEntity )null, server, store )
         {
         }
 
@@ -80,11 +80,33 @@ namespace Apics.Data.AptifyAdapter
             this.table = server.Tables.GetTableMetadata( store.EntityObject );
 
             // Get the aptify generic entity and load its contents
-            this.genericEntity = LoadGenericEntity( );
+            this.genericEntity = GetGenericEntity( server, parent, store, this.table.Entity );
+            UpdateEntityContent( );
 
             // Load any child items
             if ( store.Persister.HasCascades )
                 this.children = LoadChildEntities( ).ToArray( );
+        }
+
+        private AptifyEntity( AptifyDataFieldBase field, AptifyServer server, EntityStore store )
+        {
+            if ( !field.EmbeddedObjectExists )
+                throw new InvalidOperationException( field.Name + " is not an embedded object" );
+
+            this.server = server;
+            this.store = store;
+
+            // Get the entity that is mapped to this model instance
+            this.table = server.Tables.GetTableMetadata( store.EntityObject );
+
+            this.genericEntity = field.EmbeddedObject;
+            UpdateEntityContent( );
+
+            // Load any child items
+            if ( store.Persister.HasCascades )
+                this.children = LoadChildEntities( ).ToArray( );
+
+            this.store.MarkAsPersisted( 0 );
         }
 
         /// <summary>
@@ -113,11 +135,6 @@ namespace Apics.Data.AptifyAdapter
                     foreach ( AptifyEntity child in this.children )
                         child.SaveOrUpdate( );
                 }
-
-                // Are we supposed to refresh?
-                this.store.Session.Refresh( this.store.EntityObject );
-
-                this.store.Status = EntityStatus.Clean;
 
                 return id;
             }
@@ -163,21 +180,23 @@ namespace Apics.Data.AptifyAdapter
         /// <summary>
         /// Loads an aptify entity
         /// </summary>
-        private AptifyGenericEntityBase LoadGenericEntity( )
+        private static AptifyGenericEntityBase GetGenericEntity( AptifyServer server, AptifyEntity parent, EntityStore store, 
+            AptifyEntityMetadata metadata )
         {
             // Clean entities don't need to be loaded
-            if ( this.store.Status == EntityStatus.Clean && this.parent != null )
+            if ( store.Status == EntityStatus.Clean && parent != null )
                 return null;
 
-            Log.DebugFormat( "Trying to load entity '{0}'", this.table.Entity.Name );
+            Log.DebugFormat( "Loading entity: '{0}'", metadata.Name );
 
-            AptifyGenericEntityBase entity;
+            if ( parent != null )
+                return server.GetEntity( parent, metadata, store );
 
-            if ( this.parent != null )
-                entity = this.server.GetEntity( this.parent, this.table.Entity, this.store );
-            else
-                entity = this.server.GetEntity( this.table.Entity, this.store );
+            return server.GetEntity( metadata, store );
+       }
 
+        private void UpdateEntityContent( )
+        {
             // Update each dirty value
             foreach ( int dirtyIndex in this.store.DirtyIndices )
             {
@@ -191,13 +210,8 @@ namespace Apics.Data.AptifyAdapter
                     this.store.Persister.PropertyCascadeStyles[ dirtyIndex ].DoCascade( CascadingAction.SaveUpdate );
 
                 if ( this.table.Columns.TryGetValue( columnName, out column ) )
-                    SetColumnValue( entity, column, this.store[ dirtyIndex ], doCascade );
+                    SetColumnValue( this.genericEntity, column, this.store[ dirtyIndex ], doCascade );
             }
-
-            Log.DebugFormat( "Loaded {0}[{1}] entity", this.table.Entity.Name, this.store.Id );
-
-            // Return the newly created and loaded generic entity
-            return entity;
         }
 
         /// <summary>
@@ -212,10 +226,19 @@ namespace Apics.Data.AptifyAdapter
             for ( int i = 0; i < propertyCascades.Length; ++i )
             {
                 IType type = this.store.Persister.PropertyTypes[ i ];
+                string propertyName = this.store.Persister.PropertyNames[ i ];
+                AptifyColumnMetadata column = null;
 
                 // Make sure that this property requires cascade saves
                 if ( !propertyCascades[ i ].DoCascade( CascadingAction.SaveUpdate ) )
                     continue;
+
+                // Ignore embedded entities.  These are saved in the root object
+                if ( this.table.Columns.TryGetValue( propertyName, out column ) )
+                {
+                    if ( column.IsEmbedded )
+                        continue;
+                }
 
                 // Pull all the child items
                 object child = this.store.Persister.GetPropertyValue( this.store.EntityObject, i, EntityMode.Poco );
@@ -231,16 +254,24 @@ namespace Apics.Data.AptifyAdapter
         private IEnumerable<AptifyEntity> LoadDirtyChild( int index, IType type, object child )
         {
             if ( type.IsCollectionType )
-                return GetChildrenFromCollection( ( IEnumerable )child );
+            {
+                // HACK: Children need loading, but not updating through NHibernate
+                var children = GetChildrenFromCollection( ( IEnumerable )child ).ToList( );
+                yield break;
+            }
 
             // This child is not dirty
             if ( !this.store.DirtyIndices.Contains( index ) )
-                return new AptifyEntity[ ] { };
+                yield break;
 
             /// Find the persister
             var childStore = this.store.CreateChild( child );
 
-            return new[ ] { new AptifyEntity( this, this.server, childStore ) };
+            // Check that the store is clean
+            if ( childStore.Status == EntityStatus.Clean )
+                yield break;
+
+            yield return new AptifyEntity( this, this.server, childStore );
         }
 
         /// <summary>
@@ -278,6 +309,12 @@ namespace Apics.Data.AptifyAdapter
                 if ( doCascade )
                 {
                     var cascadeStore = new EntityStore( this.store.Session, state );
+
+                    if ( column.IsEmbedded )
+                    {
+                        new AptifyEntity( this.GenericEntity.Fields[ column.Name ], this.server, cascadeStore );
+                        return;
+                    }
                     var cascadeEntity = new AptifyEntity( this.server, cascadeStore );
 
                     state = cascadeEntity.SaveOrUpdate( );

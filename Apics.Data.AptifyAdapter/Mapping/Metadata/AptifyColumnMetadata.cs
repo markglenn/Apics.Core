@@ -13,6 +13,7 @@ namespace Apics.Data.AptifyAdapter.Mapping.Metadata
         private readonly string columnName;
         private readonly AptifyEntityMetadata joinEntity;
         private readonly bool nullable;
+        private readonly bool isEmbedded;
 
         #region [ Public Properties ]
 
@@ -48,9 +49,17 @@ namespace Apics.Data.AptifyAdapter.Mapping.Metadata
             get { return this.joinEntity != null; }
         }
 
+        /// <summary>
+        /// Is this column an embedded entity?
+        /// </summary>
+        internal bool IsEmbedded
+        {
+            get { return this.isEmbedded; }
+        }
+
         #endregion [ Public Properties ]
 
-        internal AptifyColumnMetadata( string column, bool nullable, AptifyEntityMetadata joinEntity )
+        internal AptifyColumnMetadata( string column, bool nullable, AptifyEntityMetadata joinEntity, bool isEmbedded )
         {
             if( String.IsNullOrEmpty( column ) )
                 throw new ArgumentException( "Table column cannot be set to a null or empty string" );
@@ -60,10 +69,11 @@ namespace Apics.Data.AptifyAdapter.Mapping.Metadata
 
             // Used for foreign key columns
             this.joinEntity = joinEntity;
+            this.isEmbedded = isEmbedded;
         }
 
         internal AptifyColumnMetadata( string column, bool nullable )
-            : this( column, nullable, null )
+            : this( column, nullable, null, false )
         {
         }
     }

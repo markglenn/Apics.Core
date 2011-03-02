@@ -5,6 +5,7 @@ using System.Linq;
 using Apics.Data.AptifyAdapter.ADO;
 using NHibernate.Connection;
 using ConfigEnvironment = NHibernate.Cfg.Environment;
+using Aptify.Framework.DataServices;
 
 namespace Apics.Data.AptifyAdapter
 {
@@ -21,7 +22,7 @@ namespace Apics.Data.AptifyAdapter
 
         public override IDbConnection GetConnection( )
         {
-            return new AptifyConnection( this.connectionString );
+            return new AptifyConnection( new DataAction( this.connectionString.Credentials ) );
         }
 
         public override void Configure( IDictionary<string, string> settings )

@@ -3,42 +3,45 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using Aptify.Framework.DataServices;
+using Aptify.Framework.Application;
 
 namespace Apics.Data.AptifyAdapter.ADO
 {
     internal class AptifyConnection : DbConnection
     {
-        private readonly DataAction dataAction;
-        private ConnectionState connectionState = ConnectionState.Closed;
-        private AptifyConnectionStringBuilder connectionString;
+        #region [ Private Members ]
 
-        public AptifyConnection( string connectionString )
-            : this( new AptifyConnectionStringBuilder( connectionString ) )
+        private readonly DataAction dataAction;
+        private ConnectionState connectionState;
+
+        #endregion [ Private Members ]
+
+        public AptifyConnection( DataAction dataAction )
         {
+            this.dataAction = dataAction;
         }
 
-        public AptifyConnection( AptifyConnectionStringBuilder connectionString )
+        internal DataAction GetDataAction( )
         {
-            this.connectionString = connectionString;
-            this.dataAction = new DataAction( this.connectionString.Credentials, String.Empty, false );
+            return this.dataAction;
         }
 
         #region [ DbConnection Overrides ]
 
         public override string ConnectionString
         {
-            get { return this.connectionString.ToString( ); }
-            set { this.connectionString = new AptifyConnectionStringBuilder( value ); }
+            get { return this.dataAction.UserCredentials.ConnectionString; }
+            set { throw new NotSupportedException( ); }
         }
 
         public override string DataSource
         {
-            get { return this.connectionString.DataSource; }
+            get { return this.dataAction.UserCredentials.Server; }
         }
 
         public override string Database
         {
-            get { return this.connectionString.InitialCatalog; }
+            get { return this.dataAction.UserCredentials.EntitiesDatabase; }
         }
 
         public override string ServerVersion
@@ -78,9 +81,5 @@ namespace Apics.Data.AptifyAdapter.ADO
 
         #endregion [ DbConnection Overrides ]
 
-        internal DataAction GetDataAction( )
-        {
-            return this.dataAction;
-        }
     }
 }

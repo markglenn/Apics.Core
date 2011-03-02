@@ -61,7 +61,7 @@ namespace Apics.Data.AptifyAdapter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SELECT EntityID, Name, BaseTable, SQLAllowNull, LinkedEntity from EntityFields order by EntityID, Sequence.
+        ///   Looks up a localized string similar to SELECT EntityID, Name, BaseTable, SQLAllowNull, LinkedEntity, LinkType from EntityFields order by EntityID, Sequence.
         /// </summary>
         internal static string GetAllColumns {
             get {

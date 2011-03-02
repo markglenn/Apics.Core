@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Castle.ActiveRecord;
+using System.Data;
 
 namespace Apics.Data.Database
 {
@@ -8,10 +9,21 @@ namespace Apics.Data.Database
 	{
 		#region [ Private Members ]
 
-		private readonly TransactionScope scope = new TransactionScope( );
+        private readonly TransactionScope scope;
+
 		private bool isCommitted;
 
 		#endregion [ Private Members ]
+
+        public Transaction( )
+        {
+            this.scope = new TransactionScope( TransactionMode.New, OnDispose.Rollback );
+        }
+
+        public Transaction( IsolationLevel isolationLevel )
+        {
+            this.scope = new TransactionScope( TransactionMode.New, isolationLevel, OnDispose.Rollback );
+        }
 
 		#region [ ITransaction Members ]
 

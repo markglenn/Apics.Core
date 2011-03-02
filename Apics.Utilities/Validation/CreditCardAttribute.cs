@@ -22,8 +22,11 @@ namespace Apics.Utilities.Validation
 
     public class CreditCardAttribute : ValidationAttribute
     {
+        #region [ Private Members ]
 
         private CardType cardType = CardType.All;
+
+        #endregion [ Private Members ]
 
         public CreditCardAttribute( )
         {
@@ -39,11 +42,19 @@ namespace Apics.Utilities.Validation
         {
             var number = Convert.ToString( value );
 
+            // Nothing entered in the field
             if ( String.IsNullOrEmpty( number ) )
                 return false;
 
             return IsValidType( number, this.cardType ) && IsValidNumber( number );
         }
+
+        public override string FormatErrorMessage( string name )
+        {
+            return String.Format( "The {0} field contains an invalid credit card number", name );
+        }
+
+        #region [ Private Methods ]
 
         private bool IsValidType( string cardNumber, CardType cardType )
         {
@@ -62,13 +73,13 @@ namespace Apics.Utilities.Validation
                 && ( ( cardType & CardType.Amex ) != 0 ) )
                 return cardNumber.Length == 15;
 
-            // Diners
-            if ( ( cardType & CardType.Diners ) != 0  && Regex.IsMatch( cardNumber, "^(300|301|302|303|304|305|36|38)" ) )
-                return cardNumber.Length == 14;
-
             // Discover
             if ( ( cardType & CardType.Discover ) != 0 && Regex.IsMatch( cardNumber, "^(6011)" ) )
                 return cardNumber.Length == 16;
+
+            // Diners
+            if ( ( cardType & CardType.Diners ) != 0  && Regex.IsMatch( cardNumber, "^(300|301|302|303|304|305|36|38)" ) )
+                return cardNumber.Length == 14;
 
             //Unknown
             if ( ( cardType & CardType.Unknown ) != 0 )
@@ -92,5 +103,7 @@ namespace Apics.Utilities.Validation
 
             return ( ( checksum % 10 ) == 0 );
         }
+
+        #endregion [ Private Methods ]
     }
 }

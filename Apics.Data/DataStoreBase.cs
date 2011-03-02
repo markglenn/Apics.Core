@@ -160,5 +160,15 @@ namespace Apics.Data
 
 		#endregion [ IDisposable Members ]
 
+
+        #region IDataStore Members
+
+
+        public ITransaction CreateTransaction( IsolationLevel isolationLevel )
+        {
+            return new Transaction( isolationLevel );
+        }
+
+        #endregion
     }
 }

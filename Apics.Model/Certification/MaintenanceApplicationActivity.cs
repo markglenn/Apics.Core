@@ -14,13 +14,13 @@ namespace Apics.Model.Certification
         [PrimaryKey]
         public virtual int Id { get; set; }
 
-        [BelongsTo( "ApplicationID", NotNull = true, Lazy = FetchWhen.OnInvoke )]
+        [BelongsTo( "ApplicationID", NotNull = true, Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.None )]
         public virtual MaintenanceApplication Application { get; set; }
 
-        [BelongsTo( "CategoryID", NotNull = true, Lazy = FetchWhen.OnInvoke )]
+        [BelongsTo( "CategoryID", NotNull = true, Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.None )]
         public virtual MaintenanceCategory Category { get; set; }
 
-        [BelongsTo( "ActivityID", NotNull = true, Lazy = FetchWhen.OnInvoke )]
+        [BelongsTo( "ActivityID", NotNull = true, Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.None )]
         public virtual MaintenanceActivity Activity { get; set; }
 
         [Property( NotNull = true, Length = 2000 )]

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GetAllColumns" xml:space="preserve">
-    <value>SELECT EntityID, Name, BaseTable, SQLAllowNull, LinkedEntity from EntityFields order by EntityID, Sequence</value>
+    <value>SELECT EntityID, Name, BaseTable, SQLAllowNull, LinkedEntity, LinkType from EntityFields order by EntityID, Sequence</value>
   </data>
   <data name="GetAllEntities" xml:space="preserve">
     <value>select ID, ParentID, BaseTable, Name from Entity</value>

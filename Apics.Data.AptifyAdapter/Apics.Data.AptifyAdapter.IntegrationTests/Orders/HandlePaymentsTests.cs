@@ -42,8 +42,6 @@ namespace Apics.Data.AptifyAdapter.IntegrationTests.Orders
         {
             try
             {
-
-
                 var orders = GetRepository<Order>( );
 
                 var order = new Order

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Collections;
+using System.Linq.Expressions;
+using Apics.Utilities.Extension;
 
 namespace Apics.Data
 {
@@ -81,6 +84,42 @@ namespace Apics.Data
         /// </summary>
         /// <param name="entity">Entity to refresh</param>
         void Refresh( T entity );
+    }
 
+    public static class RepositoryExtensions
+    {
+        public static TSource FirstOrDefaultProxy<TSource>( this IRepository<TSource> items ) where TSource : class
+        {
+            return items.GetProxy( items.Select( "Id" ).Cast<int>( ).FirstOrDefault( ) );
+        }
+
+        public static TSource FirstOrDefaultProxy<TSource>( this IRepository<TSource> items,
+            Expression<Func<TSource, int>> selector ) where TSource : class
+        {
+            return items.GetProxy( items.Select( selector ).FirstOrDefault( ) );
+        }
+
+        public static TSource FirstOrDefaultProxy<TSource>( this IRepository<TSource> items,
+            Expression<Func<TSource, bool>> predicate ) where TSource : class
+        {
+            var id = items.AsQueryable( )
+                .Where( predicate )
+                .Select( "Id" ).Cast<int>( )
+                .FirstOrDefault( );
+
+            return items.GetProxy( id );
+        }
+
+        public static TSource FirstOrDefaultProxy<TSource>( this IRepository<TSource> items,
+            Expression<Func<TSource, bool>> predicate,
+            Expression<Func<TSource, int>> selector ) where TSource : class
+        {
+            var id = items.AsQueryable( )
+                .Where( predicate )
+                .Select( selector )
+                .FirstOrDefault( );
+
+            return items.GetProxy( id );
+        }
     }
 }

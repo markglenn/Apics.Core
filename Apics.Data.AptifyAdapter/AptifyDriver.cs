@@ -5,6 +5,7 @@ using System.Linq;
 using Apics.Data.AptifyAdapter.ADO;
 using NHibernate.Driver;
 using Environment = NHibernate.Cfg.Environment;
+using Aptify.Framework.DataServices;
 
 namespace Apics.Data.AptifyAdapter
 {
@@ -46,7 +47,8 @@ namespace Apics.Data.AptifyAdapter
 
         public override IDbConnection CreateConnection( )
         {
-            return new AptifyConnection( this.connectionString );
+            var builder = new AptifyConnectionStringBuilder( connectionString );
+            return new AptifyConnection( new DataAction( builder.Credentials ) );
         }
 
         #endregion [ DriverBase Overrides ]

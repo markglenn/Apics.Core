@@ -12,7 +12,7 @@ using NHibernate.Metadata;
 
 namespace Apics.Data.AptifyAdapter.Store
 {
-    internal enum EntityStatus
+    public enum EntityStatus
     {
         /// <summary>
         /// This is a new entity to be saved
@@ -33,7 +33,7 @@ namespace Apics.Data.AptifyAdapter.Store
     /// <summary>
     /// Temporary storage of the NHibernate entity before saving/updating 
     /// </summary>
-    internal class EntityStore
+    public class EntityStore
     {
         #region [ Private Members ]
         
@@ -42,6 +42,7 @@ namespace Apics.Data.AptifyAdapter.Store
         private readonly IEventSource session;
         private readonly AptifyNHibernateTransaction transaction;
         private readonly IEntityPersister persister;
+        private IEnumerable<int> dirtyIndices;
 
         private object[ ] currentState;
 
@@ -56,7 +57,7 @@ namespace Apics.Data.AptifyAdapter.Store
         /// </summary>
         /// <param name="index">Index of the property</param>
         /// <returns>Value of the property</returns>
-        internal object this[ int index ]
+        public object this[ int index ]
         {
             get { return this.currentState[ index ]; }
         }
@@ -64,32 +65,23 @@ namespace Apics.Data.AptifyAdapter.Store
         /// <summary>
         /// Status of this entity
         /// </summary>
-        internal EntityStatus Status
+        public EntityStatus Status
         {
-            get
-            {
-                var o = this.entityObject as ModelBase;
-
-                if ( o != null && o.ForceSave && this.status == EntityStatus.Clean )
-                    return EntityStatus.Dirty;
-
-                return this.status;
-            }
-            set
-            {
-                this.status = value;
-            }
+            get { return this.status; }
         }
 
         /// <summary>
         /// The dirty indices
         /// </summary>
-        internal IEnumerable<int> DirtyIndices { get; private set; }
+        public IEnumerable<int> DirtyIndices
+        {
+            get { return this.dirtyIndices; }
+        }
 
         /// <summary>
         /// NHibernate entity to store
         /// </summary>
-        internal object EntityObject
+        public object EntityObject
         {
             get { return this.entityObject; }
         }
@@ -99,8 +91,13 @@ namespace Apics.Data.AptifyAdapter.Store
         /// </summary>
         public int Id
         {
-            get { return ( int )this.metadata.GetIdentifier( this.entityObject, EntityMode.Poco ); }
-            set { this.metadata.SetIdentifier( this.entityObject, value, EntityMode.Poco ); }
+            get
+            {
+                if ( this.status == EntityStatus.New )
+                    return -1;
+
+                return ( int )this.metadata.GetIdentifier( this.entityObject, EntityMode.Poco );
+            }
         }
 
         /// <summary>
@@ -126,7 +123,7 @@ namespace Apics.Data.AptifyAdapter.Store
 
         #endregion [ Public Properties ]
 
-        internal EntityStore( IEventSource session, Object entityObject )
+        public EntityStore( IEventSource session, Object entityObject )
         {
             if ( session.TransactionInProgress )
                 this.transaction = ( AptifyNHibernateTransaction )session.Transaction;
@@ -135,26 +132,30 @@ namespace Apics.Data.AptifyAdapter.Store
             this.session = session;
             this.metadata = session.SessionFactory.GetClassMetadata( entityObject.GetType( ) );
 
-            persister = this.session.GetEntityPersister( this.metadata.EntityName, entityObject );
-            LoadEntityState( );
+            this.persister = this.session.GetEntityPersister( this.metadata.EntityName, entityObject );
+
+            // Load the entity state
+            this.status = GetEntityState( );
         }
 
         /// <summary>
         /// Sets the status of the entity as clean
         /// </summary>
         /// <param name="id">New ID to set for the object</param>
-        internal void MarkAsPersisted( int id )
+        public void MarkAsPersisted( int id )
         {
             this.status = EntityStatus.Clean;
-            this.DirtyIndices = null;
+            this.dirtyIndices = null;
 
-            this.Id = id;
-
-            // Reload the entity because it may have changed
-            this.session.Refresh( this.entityObject, LockMode.None );
+            this.session.PersistenceContext.AddEntry(
+                this.entityObject, NHibernateStatus.ReadOnly,
+                this.metadata.GetPropertyValues( this.entityObject, EntityMode.Poco ),
+                null, id, null, LockMode.None, true, this.persister, false, false );
+               
+            this.metadata.SetIdentifier( this.entityObject, id, EntityMode.Poco );
         }
 
-        internal EntityStore CreateChild( object item )
+        public EntityStore CreateChild( object item )
         {
             return new EntityStore( this.session, item );
         }
@@ -164,23 +165,24 @@ namespace Apics.Data.AptifyAdapter.Store
         /// <summary>
         /// Loads the current state and sets the entity status
         /// </summary>
-        private void LoadEntityState( )
+        private EntityStatus GetEntityState( )
         {
             // Pull in the values of all the 
             this.currentState = this.metadata.GetPropertyValues( this.entityObject, EntityMode.Poco );
 
             var entry = this.session.PersistenceContext.GetEntry( this.entityObject );
-
+            
             // Get the dirty indices
-            this.DirtyIndices = GetDirtyIndices( entry, this.currentState );
+            this.dirtyIndices = GetDirtyIndices( entry, this.currentState );
 
             // Check the status based on the dirty indices
             if( entry == null || !entry.ExistsInDatabase )
-                this.status = EntityStatus.New;
-            else if( this.DirtyIndices.Any( ) )
-                this.status = EntityStatus.Dirty;
-            else
-                this.status = EntityStatus.Clean;
+                return EntityStatus.New;
+
+            if ( this.dirtyIndices.Any( ) )
+                return EntityStatus.Dirty;
+
+            return EntityStatus.Clean;
         }
 
         /// <summary>
@@ -196,6 +198,9 @@ namespace Apics.Data.AptifyAdapter.Store
                 return Enumerable.Range( 0, currentState.Count );
 
             var dirtyProperties = new List<int>( );
+
+            if ( entry.Status == NHibernateStatus.ReadOnly )
+                return dirtyProperties;
 
             for( int i = 0; i < entry.LoadedState.Length; ++i )
             {

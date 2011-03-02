@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using Castle.ActiveRecord;
 using Castle.ActiveRecord.Linq;
 using Castle.ActiveRecord.Framework;
+using NHibernate.Linq;
 
 namespace Apics.Data.Database
 {

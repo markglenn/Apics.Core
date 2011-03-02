@@ -9,7 +9,7 @@ namespace Apics.Data.AptifyAdapter.Mapping.Metadata
     /// Contains the simple metadata of an Aptify entity
     /// </summary>
     [DebuggerDisplay( "{Name}" )]
-    internal class AptifyEntityMetadata
+    public class AptifyEntityMetadata
     {
         #region [ Private Members ]
 

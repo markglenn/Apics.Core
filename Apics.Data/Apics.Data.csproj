@@ -146,7 +146,6 @@
     <Compile Include="EventHandlerComposite.cs" />
     <Compile Include="IDataService.cs" />
     <Compile Include="IEventHandler.cs" />
-    <Compile Include="ModelBase.cs" />
     <Compile Include="InMemoryRepository.cs" />
     <Compile Include="ISession.cs" />
     <Compile Include="ITransaction.cs" />
@@ -180,6 +179,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Apics.Utilities\Apics.Utilities.csproj">
+      <Project>{D1B0E0D5-E8C3-4B29-AF8C-7B2653531987}</Project>
+      <Name>Apics.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

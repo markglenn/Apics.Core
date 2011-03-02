@@ -9,6 +9,7 @@ using Aptify.Framework.Application;
 using Aptify.Framework.BusinessLogic.GenericEntity;
 using log4net;
 using Ninject;
+using Aptify.Framework.DataServices;
 
 namespace Apics.Data.AptifyAdapter
 {
@@ -17,10 +18,13 @@ namespace Apics.Data.AptifyAdapter
     /// </summary>
     public class AptifyServer
     {
+        #region [ Private Members ]
+
         private static readonly ILog Log = LogManager.GetLogger( typeof( AptifyServer ) );
 
-        private readonly AptifyConnectionStringBuilder connection;
-        private readonly IKernel kernel;
+        private readonly AptifyApplication application;
+
+        #endregion [ Private Members ]
 
         #region [ Public Properties ]
 
@@ -30,11 +34,11 @@ namespace Apics.Data.AptifyAdapter
         public TableMappings Tables { get; set; }
 
         /// <summary>
-        /// Connection string to Aptify
+        /// Connection string
         /// </summary>
-        public AptifyConnectionStringBuilder Connection
+        public string ConnectionString
         {
-            get { return this.connection; }
+            get { return this.application.UserCredentials.ConnectionString; }
         }
 
         #endregion [ Public Properties ]
@@ -43,11 +47,15 @@ namespace Apics.Data.AptifyAdapter
         /// Creates a connection to the aptify application server
         /// </summary>
         /// <param name="connection">Connection string</param>
-        public AptifyServer( IKernel kernel, AptifyConnectionStringBuilder connection )
+        public AptifyServer( AptifyApplication application )
         {
-            this.kernel = kernel;
-            this.connection = connection;
+            if ( application == null )
+                throw new ArgumentNullException( "application" );
+
+            this.application = application;
         }
+
+        #region [ GetEntity Methods ]
 
         /// <summary>
         /// Gets the generic entity from the server
@@ -55,51 +63,25 @@ namespace Apics.Data.AptifyAdapter
         /// <param name="entityMetadata">Entity metadata for loading</param>
         /// <param name="store">The NHibernate storage about the updated object</param>
         /// <returns>A new generic entity that maps to this table and store</returns>
-        internal AptifyGenericEntityBase GetEntity( AptifyEntityMetadata entityMetadata, EntityStore store )
+        public AptifyGenericEntityBase GetEntity( AptifyEntityMetadata entityMetadata, EntityStore store )
         {
             Log.DebugFormat( "Creating aptify entity for {0}", entityMetadata.Name );
 
-            var application = this.kernel.Get<AptifyApplication>( );
+            this.application.UserCredentials.DefaultTransactionID = String.Empty;
+            var entityInfo = this.application.get_Entity( entityMetadata.Id );
 
-            application.UserCredentials.DefaultTransactionID = String.Empty;
-            
-            EntityInfo info = application.get_Entity( entityMetadata.Id );
-            AptifyGenericEntityBase entity;
-
-            // Aptify requires a '-1' if the entity is to be created
-            switch( store.Status )
-            {
-                case EntityStatus.Clean:
-                case EntityStatus.Dirty:
-                    entity = info.GetEntityObject( store.Id );
-                    
-                    break;
-
-                case EntityStatus.New:
-                    entity = info.GetEntityObject( -1 );
-                    break;
-
-                default:
-                    throw new InvalidOperationException( "Unknown entity status " + store.Status );
-            }
-
-
-            Log.DebugFormat( "Successfully created aptify entity for {0}", entityMetadata.Name );
-
-            return entity;
+            return entityInfo.GetEntityObject( store.Id );
         }
 
-        internal AptifyGenericEntityBase GetEntity( string name, int id, IAptifyTransaction transaction = null )
+        public AptifyGenericEntityBase GetEntity( string name, int id, IAptifyTransaction transaction )
         {
-            var application = this.kernel.Get<AptifyApplication>( );
-
-            application.UserCredentials.DefaultTransactionID = transaction == null ? String.Empty :
+            this.application.UserCredentials.DefaultTransactionID = transaction == null ? String.Empty :
                 transaction.TransactionName;
 
-            return application.GetEntityObject( name, ( long )id );
+            return this.application.GetEntityObject( name, ( long )id );
         }
 
-        public AptifyGenericEntityBase GetEntity( object entity, IAptifyTransaction transaction = null )
+        public AptifyGenericEntityBase GetEntity( object entity, IAptifyTransaction transaction )
         {
             var aptifyEntity = this.Tables.GetEntityMetadata( entity );
 
@@ -117,14 +99,12 @@ namespace Apics.Data.AptifyAdapter
 
             long id = Convert.ToInt64( prop.GetValue( entity, null ) );
 
-            var application = this.kernel.Get<AptifyApplication>( );
-            
             // TODO: Fix this hack
-            application.UserCredentials.DefaultTransactionID = transaction != null ? transaction.TransactionName : String.Empty;
+            this.application.UserCredentials.DefaultTransactionID = 
+                transaction != null ? transaction.TransactionName : String.Empty;
 
-            EntityInfo info = application.get_Entity( aptifyEntity.Id );
-
-            return info.GetEntityObject( id );
+            return this.application.get_Entity( aptifyEntity.Id )
+                .GetEntityObject( id );
         }
 
         /// <summary>
@@ -140,7 +120,6 @@ namespace Apics.Data.AptifyAdapter
             Log.DebugFormat( "Creating child aptify entity for {0}", entityMetadata.Name );
 
             AptifySubTypeBase subType = parent.GenericEntity.SubTypes[ entityMetadata.Name ];
-            AptifyGenericEntityBase entity;
 
             // This is not a child entity within Aptify
             if (subType == null)
@@ -150,64 +129,73 @@ namespace Apics.Data.AptifyAdapter
             {
                 case EntityStatus.Clean:
                 case EntityStatus.Dirty:
-                    entity = subType.Find( "id", store.Id );
-                    break;
+                    Log.DebugFormat( "Loading subentity for {0}", entityMetadata.Name );
+                    return subType.Find( "id", store.Id );
 
                 case EntityStatus.New:
-                    entity = subType.Add( );
-                    break;
+                    Log.DebugFormat( "Loading new subentity for {0}", entityMetadata.Name );
+                    return subType.Add( );
 
                 default:
                     throw new InvalidOperationException( "Unknown entity status " + store.Status );
             }
-
-            Log.DebugFormat( "Successfully loaded aptify entity for {0}", entityMetadata.Name );
-
-            return entity;
         }
+
+        /// <summary>
+        /// Gets an entity by id and entity name
+        /// </summary>
+        /// <param name="name">Entity name</param>
+        /// <param name="id">Object id</param>
+        /// <returns>A generic entity based on the name and id</returns>
+        internal AptifyGenericEntityBase GetEntity( string name, int id )
+        {
+            return GetEntity( name, id, null );
+        }
+
+        /// <summary>
+        /// Load the entity by the object out of transaction
+        /// </summary>
+        /// <param name="entity">Object of the entity</param>
+        /// <returns>The generic entity based on the entity object type</returns>
+        public AptifyGenericEntityBase GetEntity( object entity )
+        {
+            return GetEntity( entity, null );
+        }
+
+        #endregion [ GetEntity Methods ]
 
         /// <summary>
         /// Helper method to quickly create a database connection that runs through the aptify server
         /// </summary>
         /// <returns>A new IDbConnection that connects to Aptify</returns>
-        internal IDbConnection CreateConnection( )
+        public IDbConnection CreateConnection( )
         {
-            return new AptifyConnection( this.connection );
+            return new AptifyConnection( new DataAction( this.application.UserCredentials ) );
         }
 
-        internal int SaveEntity( AptifyGenericEntityBase genericEntity, IAptifyTransaction transaction )
+        /// <summary>
+        /// Save the given entity to the database
+        /// </summary>
+        /// <param name="genericEntity">Generic entity to save</param>
+        /// <param name="transaction">Transaction to save within</param>
+        /// <returns>The new ID of the entity</returns>
+        public int SaveEntity( AptifyGenericEntityBase genericEntity, IAptifyTransaction transaction )
         {
-            string errorMessage = String.Empty;
+            string message = String.Empty;
+            string transactionName = ( transaction == null ) ? null : transaction.TransactionName;
 
-            // Is this in a transaction
-            if( transaction == null )
+            // Validate the entity for errors
+            if ( !genericEntity.Validate( ref message ) )
+                throw new DataException( message );
+
+            // Try saving the entity
+            if ( !genericEntity.Save( false, ref message, transactionName ) )
             {
-                // Save without transaction
-                if ( !genericEntity.Save( false, ref errorMessage ) )
-                {
-                    // It's possible the error message is not returned
-                    if ( String.IsNullOrEmpty( errorMessage ) )
-                        errorMessage = genericEntity.LastError;
+                // It's possible the error message is not returned
+                if ( String.IsNullOrEmpty( message ) )
+                    message = genericEntity.LastError;
 
-                    throw new DataException( errorMessage );
-                }
-            }
-            else
-            {
-                string validationMessage = String.Empty;
-
-                if ( !genericEntity.Validate( ref validationMessage ) )
-                    throw new DataException( errorMessage );
-
-                // Save using the transaction
-                if ( !genericEntity.Save( false, ref errorMessage, transaction.TransactionName ) )
-                {
-                    // It's possible the error message is not returned
-                    if ( String.IsNullOrEmpty( errorMessage ) )
-                        errorMessage = genericEntity.LastError;
-
-                    throw new DataException( errorMessage );
-                }
+                throw new DataException( message );
             }
 
             return ( int )genericEntity.RecordID;

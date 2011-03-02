@@ -113,6 +113,7 @@ namespace Apics.Data.AptifyAdapter.Mapping
                         var tableName = ( string )reader[ "BaseTable" ];
                         var columnName = ( string )reader[ "Name" ];
                         var nullable = ( bool )reader[ "SQLAllowNull" ];
+                        var embedded = ( ( string )reader[ "LinkType" ] ?? String.Empty ).Trim( ) == "Embedded";
 
                         AptifyEntityMetadata entity = entities.GetById( entityId );
 
@@ -129,7 +130,7 @@ namespace Apics.Data.AptifyAdapter.Mapping
                             entity.AddTable( table );
                         }
 
-                        var column = new AptifyColumnMetadata( columnName, nullable, parent );
+                        var column = new AptifyColumnMetadata( columnName, nullable, parent, embedded );
 
                         table.AddColumn( column );
                     }

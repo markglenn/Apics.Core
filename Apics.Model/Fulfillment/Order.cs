@@ -15,7 +15,7 @@ namespace Apics.Model.Fulfillment
     /// </summary>
     [ActiveRecord( "OrderMaster", Lazy = true )]
     [DebuggerDisplay( "Order: {Id}" )]
-    public class Order : ModelBase
+    public class Order
     {
         public Order( )
         {
@@ -37,6 +37,9 @@ namespace Apics.Model.Fulfillment
         /// </summary>
         [Property]
         public virtual DateTime OrderDate { get; set; }
+
+        [Property( "ReturnShippingCharge" )]
+        public virtual bool ShouldCalculateShipping { get; set; }
 
         /// <summary>
         /// Any comments associated with the order
