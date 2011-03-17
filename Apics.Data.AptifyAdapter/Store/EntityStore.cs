@@ -147,12 +147,14 @@ namespace Apics.Data.AptifyAdapter.Store
             this.status = EntityStatus.Clean;
             this.dirtyIndices = null;
 
+            // Add an entry in our current session to make the object "attached" to the session.
             this.session.PersistenceContext.AddEntry(
                 this.entityObject, NHibernateStatus.ReadOnly,
                 this.metadata.GetPropertyValues( this.entityObject, EntityMode.Poco ),
                 null, id, null, LockMode.None, true, this.persister, false, false );
                
-            this.metadata.SetIdentifier( this.entityObject, id, EntityMode.Poco );
+            if ( id != 0 )
+                this.metadata.SetIdentifier( this.entityObject, id, EntityMode.Poco );
         }
 
         public EntityStore CreateChild( object item )

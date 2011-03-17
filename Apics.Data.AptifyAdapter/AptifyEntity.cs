@@ -106,7 +106,7 @@ namespace Apics.Data.AptifyAdapter
             if ( store.Persister.HasCascades )
                 this.children = LoadChildEntities( ).ToArray( );
 
-            this.store.MarkAsPersisted( 0 );
+            //this.store.MarkAsPersisted( 0 );
         }
 
         /// <summary>
@@ -309,13 +309,17 @@ namespace Apics.Data.AptifyAdapter
                 if ( doCascade )
                 {
                     var cascadeStore = new EntityStore( this.store.Session, state );
+                    AptifyEntity cascadeEntity;
 
                     if ( column.IsEmbedded )
                     {
-                        new AptifyEntity( this.GenericEntity.Fields[ column.Name ], this.server, cascadeStore );
-                        return;
+                        cascadeEntity =
+                            new AptifyEntity( this.GenericEntity.Fields[ column.Name ], this.server, cascadeStore );
                     }
-                    var cascadeEntity = new AptifyEntity( this.server, cascadeStore );
+                    else
+                    {
+                        cascadeEntity = new AptifyEntity( this.server, cascadeStore );
+                    }
 
                     state = cascadeEntity.SaveOrUpdate( );
                 }

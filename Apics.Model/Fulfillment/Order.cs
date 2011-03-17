@@ -38,6 +38,9 @@ namespace Apics.Model.Fulfillment
         [Property]
         public virtual DateTime OrderDate { get; set; }
 
+        [Property]
+        public virtual bool BillToSameAsShipTo { get; set; }
+
         [Property( "ReturnShippingCharge" )]
         public virtual bool ShouldCalculateShipping { get; set; }
 
@@ -101,7 +104,7 @@ namespace Apics.Model.Fulfillment
         /// <summary>
         /// The address to which the order is being shipped
         /// </summary>
-        [BelongsTo( "ShipToAddressID", Lazy = FetchWhen.OnInvoke )]
+        [BelongsTo( "ShipToAddressID", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.All )]
         public virtual Address ShipToAddress { get; set; }
 
         /// <summary>
@@ -113,7 +116,7 @@ namespace Apics.Model.Fulfillment
         /// <summary>
         /// The address to which the order is being billed
         /// </summary>
-        [BelongsTo( "BillToAddressID", Lazy = FetchWhen.OnInvoke )]
+        [BelongsTo( "BillToAddressID", Lazy = FetchWhen.OnInvoke, Cascade = CascadeEnum.All )]
         public virtual Address BillToAddress { get; set; }
 
         [BelongsTo( "ShipTypeID", Lazy = FetchWhen.OnInvoke )]
